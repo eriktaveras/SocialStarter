@@ -32,47 +32,47 @@ Asegúrate de tener instalado Python 3.8+, Pip y Virtualenv, además de una inst
 
 ### 📦 Clonar el Repositorio
 
-\`\`\`
+```
 git clone https://tu-repositorio-aqui.git
 cd nombre-del-proyecto
-\`\`\`
+```
 
 ### 🌐 Configurar el Entorno Virtual
 
-\`\`\`
+```
 python -m venv venv
 source venv/bin/activate  # En Windows usa \`venv\Scripts\activate\`
-\`\`\`
+```
 
 ### 📚 Instalar Dependencias
 
-\`\`\`
+```
 pip install -r requirements.txt
-\`\`\`
+```
 
 ### 🔑 Configurar Variables de Entorno
 
 Crea un archivo \`.env\` en el directorio principal del proyecto y agrega las siguientes variables de entorno:
 
-\`\`\`
+```
 SECRET_KEY=tu_clave_secreta_aqui
 DEBUG=True  # Cambiar a False en producción
 DATABASE_URL=URL_de_tu_base_de_datos
 ALLOWED_HOSTS=.localhost, .tu-dominio.com
-\`\`\`
+```
 
 ### 🗃 Migraciones y Crear Superusuario
 
-\`\`\`
+```
 python manage.py migrate
 python manage.py createsuperuser
-\`\`\`
+```
 
 ### 🏃‍♂️ Ejecutar el Proyecto
 
-\`\`\`
+```
 python manage.py runserver
-\`\`\`
+```
 
 El servidor de desarrollo iniciará en \`http://127.0.0.1:8000/\`.
 
