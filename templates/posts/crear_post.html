@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Crear Post{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold mb-4">Crear Post</h1>
+    
+    <!-- Añadido enctype="multipart/form-data" para soportar la carga de archivos -->
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="py-2 px-4 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700">Publicar</button>
+    </form>
+    
+    <a href="{% url 'post_list' %}" class="text-gray-600 mt-4">Volver al Feed</a>
+</div>
+{% endblock %}

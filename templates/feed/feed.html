@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Feed{% endblock %}
+
+{% block content %}
+<div class="bg-[#15202b] min-h-screen">
+    <div class="container mx-auto px-4">
+        <div class="max-w-2xl mx-auto bg-[#192734] p-5 rounded-lg shadow mt-10">
+            <form method="post" action="{% url 'posts:crear_post' %}" enctype="multipart/form-data" class="mb-6">
+                {% csrf_token %}
+                <div class="mb-6">
+                    <label for="post_text" class="block text-white text-sm font-bold mb-2">¿Qué estás pensando?</label>
+                    <textarea id="post_text" name="text" rows="3" class="shadow-sm focus:ring-blue-500 focus:border-blue-500 mt-1 block w-full sm:text-sm border-gray-600 bg-[#192734] text-white rounded-md" placeholder="Comparte algo..."></textarea>
+                </div>
+            
+                <!-- Botones de acción al final del formulario -->
+                <div class="flex items-center justify-between">
+                    <!-- Botón de adjuntar imagen/video -->
+                    <label class="flex items-center cursor-pointer text-blue-400 hover:text-blue-500 transition-colors duration-200 ease-in-out">
+                        <i class="fas fa-upload mr-2"></i> Subir imagen/video
+                        <input type="file" name="image" class="hidden" />
+                    </label>
+                    
+                    <!-- Botón de publicar -->
+                    <button type="submit" class="flex justify-center items-center px-6 py-2 bg-blue-400 text-white font-medium rounded-md hover:bg-blue-500 transition-colors duration-200 ease-in-out">
+                        <i class="fas fa-paper-plane mr-2"></i> Publicar
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        {% for post in posts %}
+        <div class="mb-8 p-6 bg-[#192734] rounded-lg shadow mt-5">
+            <div class="flex items-center mb-4">
+                <a href="{% url 'users:view_profile' username=post.user.username %}">
+                    <img class="h-10 w-10 rounded-full mr-4" src="{{ post.user.profile.avatar_url }}" alt="{{ post.user.username }}'s avatar" onerror="this.onerror=null; this.src='https://via.placeholder.com/150/CDCDCD/808080?Text=Digital%20Identity';">
+                </a>
+                <div>
+                    <a href="{% url 'users:view_profile' username=post.user.username %}" class="text-lg font-semibold text-white hover:underline">
+                        {{ post.user.username }}
+                    </a>
+                    <span class="text-gray-400 text-sm">{{ post.created_at|date:"F d, Y H:i" }}</span>
+                </div>
+            </div>
+            <p class="text-gray-300 mb-4">{{ post.text }}</p>
+            {% if post.image %}
+            <div class="mb-4">
+                <img src="{{ post.image.url }}" alt="Imagen del post" class="max-w-full h-auto rounded-lg">
+            </div>
+            {% endif %}
+            <div class="flex items-center justify-between text-gray-400">
+                {% if request.user in post.likes.all %}
+                <a href="{% url 'interactions:like_post' post.id %}" class="flex items-center hover:text-red-600">
+                    <i class="fas fa-heart"></i> <span class="ml-1">{{ post.likes.count }}</span>
+                </a>
+                {% else %}
+                <a href="{% url 'interactions:like_post' post.id %}" class="flex items-center hover:text-blue-400">
+                    <i class="far fa-heart"></i> <span class="ml-1">{{ post.likes.count }}</span>
+                </a>
+                {% endif %}
+                <a href="{% url 'interactions:comment_post' post.id %}" class="flex items-center hover:text-gray-300">
+                    <i class="far fa-comment"></i> <span class="ml-1">{{ post.comments.count }} Comentar</span>
+                </a>
+            </div>
+            {% if post.comments.all %}
+            <div class="mt-4 bg-[#162D40] p-4 rounded">
+                <h3 class="text-sm font-semibold mb-2 text-white">Comentarios:</h3>
+                {% for comment in post.comments.all %}
+                <div class="mb-2 text-gray-300">
+                    <p><strong>{{ comment.user.username }}:</strong> {{ comment.text }}</p>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        {% empty %}
+        <div class="text-center py-8">
+            <p class="text-gray-600">No hay publicaciones para mostrar.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

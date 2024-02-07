@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Lista de Publicaciones{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4">
+    <h1 class="text-xl font-bold my-4">Publicaciones Recientes</h1>
+    {% for post in posts %}
+    <div class="mb-8 p-4 bg-white shadow-md rounded-lg">
+        <h2 class="text-lg font-semibold">{{ post.user.username }}</h2>
+        <p class="text-gray-700">{{ post.text }}</p>
+        <!-- Mostrar imagen si está disponible -->
+        {% if post.image %}
+        <div class="mt-4">
+            <img src="{{ post.image.url }}" alt="Imagen de la publicación" class="max-w-full h-auto rounded-md">
+        </div>
+        {% endif %}
+        <!-- Mostrar video si está disponible -->
+        {% if post.video %}
+        <div class="mt-4">
+            <video controls class="max-w-full h-auto rounded-md">
+                <source src="{{ post.video.url }}" type="video/mp4">
+                Tu navegador no soporta videos.
+            </video>
+        </div>
+        {% endif %}
+        <small class="text-gray-600">Publicado el: {{ post.created_at|date:"F d, Y H:i" }}</small>
+    </div>
+    {% empty %}
+    <p>No hay publicaciones aún.</p>
+    {% endfor %}
+</div>
+{% endblock %}

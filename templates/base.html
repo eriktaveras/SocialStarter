@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Mi Red Social{% endblock title %}</title>
+    <!-- Referencia a Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body class="bg-[#15202b] text-white">
+
+<!-- Navegación -->
+<nav class="bg-[#192734] shadow">
+    <div class="container mx-auto px-6 py-3">
+        <div class="flex items-center justify-between">
+            <div>
+                <a href="/" class="text-xl font-semibold text-white">Mi Red Social</a>
+            </div>
+            <div>
+                {% if user.is_authenticated %}
+                <a href="{% url 'users:view_profile' user.username %}" class="px-3 py-2 rounded text-white hover:bg-[#15202b]">Perfil</a>
+                <a href="{% url 'feed:feed' %}" class="px-3 py-2 rounded text-white hover:bg-[#15202b]">Feed</a>
+                <a href="{% url 'account_logout' %}" class="px-3 py-2 rounded text-white hover:bg-[#15202b]">Logout</a>
+                {% else %}
+                <a href="{% url 'account_login' %}" class="px-3 py-2 rounded text-white hover:bg-[#15202b]">Login</a>
+                <a href="{% url 'account_signup' %}" class="px-3 py-2 rounded text-white hover:bg-[#15202b]">Sign Up</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Contenido Principal -->
+<main class="container mx-auto px-6 py-8">
+    {% block content %}
+    <!-- El contenido específico de la página va aquí -->
+    {% endblock content %}
+</main>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Scripts -->
+{% block scripts %}
+<!-- Scripts opcionales que las páginas pueden añadir -->
+{% endblock scripts %}
+
+</body>
+</html>

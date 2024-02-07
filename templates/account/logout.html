@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="flex items-center justify-center min-h-screen bg-gray-100">
+    <div class="px-8 py-6 text-left bg-white shadow-lg">
+        <h3 class="text-2xl font-bold">Are you sure you want to logout?</h3>
+        <form method="post" action="{% url 'account_logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="px-4 py-2 mt-4 text-white bg-red-600 rounded hover:bg-red-800">Logout</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
