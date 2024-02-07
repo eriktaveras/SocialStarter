@@ -2,6 +2,9 @@
 # SocialStarter ![Python](https://img.shields.io/badge/Python-3.8%2B-blue) ![Django](https://img.shields.io/badge/Django-3.2-green) ![django-allauth](https://img.shields.io/badge/django--allauth-0.45-orange)
 
 
+![229shots_so](https://github.com/eriktaveras/SocialStarter/assets/10116703/88b2465a-9cd8-42df-813d-2c9aad9991f7)
+
+
 SocialStarter es un proyecto de código abierto diseñado para servir como plantilla
 para la creación de redes sociales. Incluye características esenciales como publicaciones,
 likes, comentarios, relaciones entre usuarios y autenticación, utilizando Django y django-allauth.
