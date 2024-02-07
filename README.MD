@@ -41,7 +41,7 @@ cd nombre-del-proyecto
 
 ```
 python -m venv venv
-source venv/bin/activate  # En Windows usa \`venv\Scripts\activate\`
+source venv/bin/activate  # En Windows usa `venv\Scripts\activate`
 ```
 
 ### 📚 Instalar Dependencias
@@ -52,7 +52,7 @@ pip install -r requirements.txt
 
 ### 🔑 Configurar Variables de Entorno
 
-Crea un archivo \`.env\` en el directorio principal del proyecto y agrega las siguientes variables de entorno:
+Crea un archivo `.env` en el directorio principal del proyecto y agrega las siguientes variables de entorno:
 
 ```
 SECRET_KEY=tu_clave_secreta_aqui
@@ -74,7 +74,7 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
-El servidor de desarrollo iniciará en \`http://127.0.0.1:8000/\`.
+El servidor de desarrollo iniciará en `http://127.0.0.1:8000/`.
 
 ## 🔐 Uso de django-allauth
 
@@ -87,6 +87,6 @@ Si deseas contribuir al proyecto, por favor sigue estos pasos:
 1. Haz un fork del repositorio.
 2. Crea una rama para tu característica (`git checkout -b mi-nueva-característica`).
 3. Haz tus cambios y commit (`git commit -am 'Añadir alguna característica'`).
-4. Push a la rama (\`git push origin mi-nueva-característica\`).
+4. Push a la rama (`git push origin mi-nueva-característica`).
 5. Crea una nueva Pull Request.
 
