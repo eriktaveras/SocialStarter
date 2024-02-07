@@ -78,15 +78,15 @@ El servidor de desarrollo iniciará en \`http://127.0.0.1:8000/\`.
 
 ## 🔐 Uso de django-allauth
 
-Para configurar \`django-allauth\` y habilitar la autenticación social, sigue la [documentación oficial de django-allauth](https://django-allauth.readthedocs.io/).
+Para configurar `django-allauth` y habilitar la autenticación social, sigue la [documentación oficial de django-allauth](https://django-allauth.readthedocs.io/).
 
 ## 🤝 Cómo Contribuir
 
 Si deseas contribuir al proyecto, por favor sigue estos pasos:
 
 1. Haz un fork del repositorio.
-2. Crea una rama para tu característica (\`git checkout -b mi-nueva-característica\`).
-3. Haz tus cambios y commit (\`git commit -am 'Añadir alguna característica'\`).
+2. Crea una rama para tu característica (`git checkout -b mi-nueva-característica`).
+3. Haz tus cambios y commit (`git commit -am 'Añadir alguna característica'`).
 4. Push a la rama (\`git push origin mi-nueva-característica\`).
 5. Crea una nueva Pull Request.
 
