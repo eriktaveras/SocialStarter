@@ -1,95 +1,88 @@
 
 # SocialStarter ![Python](https://img.shields.io/badge/Python-3.8%2B-blue) ![Django](https://img.shields.io/badge/Django-3.2-green) ![django-allauth](https://img.shields.io/badge/django--allauth-0.45-orange)
 
+![SocialStarter Screenshot](https://github.com/eriktaveras/SocialStarter/assets/10116703/88b2465a-9cd8-42df-813d-2c9aad9991f7)
 
-![229shots_so](https://github.com/eriktaveras/SocialStarter/assets/10116703/88b2465a-9cd8-42df-813d-2c9aad9991f7)
+SocialStarter is an open-source project designed to serve as a template for building social networks. It includes core features such as posts, likes, comments, user relationships, and authentication, utilizing Django and django-allauth. Ideal for developers looking for a solid starting point for their social projects.
 
+## 🌟 Features
 
-SocialStarter es un proyecto de código abierto diseñado para servir como plantilla
-para la creación de redes sociales. Incluye características esenciales como publicaciones,
-likes, comentarios, relaciones entre usuarios y autenticación, utilizando Django y django-allauth.
-Ideal para desarrolladores que buscan un punto de partida sólido para sus proyectos sociales.
+- 📝 Text, image, and video posts
+- ❤️ Like and comment system
+- 👥 User follow relationships (followers/following)
+- 🚀 Extended user profiles
+- 🔒 User authentication and registration with `django-allauth` (includes support for social auth)
 
-
-## 🌟 Características
-
-- 📝 Publicaciones de texto, imágenes y videos
-- ❤️ Sistema de likes y comentarios
-- 👥 Relaciones de seguimiento entre usuarios (followers/following)
-- 🚀 Perfiles de usuario extendidos
-- 🔒 Autenticación y registro de usuarios con `django-allauth` (incluye soporte para autenticación social)
-
-## 🛠 Tecnologías Utilizadas
+## 🛠 Technologies Used
 
 - Django
 - django-allauth
-- PostgreSQL (u otra base de datos de tu elección)
-- Django Rest Framework (si aplica)
-- Tailwind CSS (si aplica)
+- PostgreSQL (or any other database of your choice)
+- Django Rest Framework (if applicable)
+- Tailwind CSS (if applicable)
 
-## ⚙️ Requisitos Previos
+## ⚙️ Prerequisites
 
-Asegúrate de tener instalado Python 3.8+, Pip y Virtualenv, además de una instancia de PostgreSQL (o la base de datos que prefieras) corriendo si decides utilizarla.
+Ensure you have Python 3.8+, Pip, and Virtualenv installed, as well as a running instance of PostgreSQL (or your preferred database) if you decide to use it.
 
-## 🚀 Configuración del Proyecto
+## 🚀 Project Setup
 
-### 📦 Clonar el Repositorio
+### 📦 Clone the Repository
 
+```bash
+git clone https://your-repository-here.git
+cd project-name
 ```
-git clone https://tu-repositorio-aqui.git
-cd nombre-del-proyecto
-```
 
-### 🌐 Configurar el Entorno Virtual
+### 🌐 Set Up Virtual Environment
 
-```
+```bash
 python -m venv venv
-source venv/bin/activate  # En Windows usa `venv\Scripts\activate`
+source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
 ```
 
-### 📚 Instalar Dependencias
+### 📚 Install Dependencies
 
-```
+```bash
 pip install -r requirements.txt
 ```
 
-### 🔑 Configurar Variables de Entorno
+### 🔑 Configure Environment Variables
 
-Crea un archivo `.env` en el directorio principal del proyecto y agrega las siguientes variables de entorno:
+Create a `.env` file in the main project directory and add the following environment variables:
 
+```plaintext
+SECRET_KEY=your_secret_key_here
+DEBUG=True  # Set to False in production
+DATABASE_URL=your_database_url
+ALLOWED_HOSTS=.localhost, .your-domain.com
 ```
-SECRET_KEY=tu_clave_secreta_aqui
-DEBUG=True  # Cambiar a False en producción
-DATABASE_URL=URL_de_tu_base_de_datos
-ALLOWED_HOSTS=.localhost, .tu-dominio.com
-```
 
-### 🗃 Migraciones y Crear Superusuario
+### 🗃 Migrations and Create Superuser
 
-```
+```bash
 python manage.py migrate
 python manage.py createsuperuser
 ```
 
-### 🏃‍♂️ Ejecutar el Proyecto
+### 🏃 Run the Project
 
-```
+```bash
 python manage.py runserver
 ```
 
-El servidor de desarrollo iniciará en `http://127.0.0.1:8000/`.
+The development server will start at `http://127.0.0.1:8000/`.
 
-## 🔐 Uso de django-allauth
+## 🔐 Using django-allauth
 
-Para configurar `django-allauth` y habilitar la autenticación social, sigue la [documentación oficial de django-allauth](https://django-allauth.readthedocs.io/).
+To configure `django-allauth` and enable social authentication, follow the [official django-allauth documentation](https://django-allauth.readthedocs.io/).
 
-## 🤝 Cómo Contribuir
+## 🤝 How to Contribute
 
-Si deseas contribuir al proyecto, por favor sigue estos pasos:
+If you wish to contribute to the project, please follow these steps:
 
-1. Haz un fork del repositorio.
-2. Crea una rama para tu característica (`git checkout -b mi-nueva-característica`).
-3. Haz tus cambios y commit (`git commit -am 'Añadir alguna característica'`).
-4. Push a la rama (`git push origin mi-nueva-característica`).
-5. Crea una nueva Pull Request.
-
+1. Fork the repository.
+2. Create a feature branch (`git checkout -b feature-new-feature`).
+3. Make your changes and commit (`git commit -am 'Add some feature'`).
+4. Push to the branch (`git push origin feature-new-feature`).
+5. Create a new Pull Request.
