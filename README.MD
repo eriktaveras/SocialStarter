@@ -37,26 +37,28 @@ cd project-name
 ### 🌐 Set Up Virtual Environment
 
 #### Virtualenv
-    ```bash
+```bash
     python -m venv venv
     source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
-    ```
+```
 #### poetry-python
-    ```bash
+```bash
     poetry init
     poetry shell
-    ```
+```
 ### 📚 Install Dependencies
-#### virtualenv
-    ```bash
+#### Virtualenv
+
+```bash
     pip install -r requirements.txt
-    ```
+```
 #### poetry-python
-    ```bash
+
+```bash
     poetry install
         or
     python install_requirements.py
-    ```
+```
 
 ### 🔑 Configure Environment Variables
 
