@@ -1,99 +1,173 @@
-
-# SocialStarter ![Python](https://img.shields.io/badge/Python-3.8%2B-blue) ![Django](https://img.shields.io/badge/Django-3.2-green) ![django-allauth](https://img.shields.io/badge/django--allauth-0.45-orange)
+# SocialStarter ![Python](https://img.shields.io/badge/Python-3.8%2B-blue) ![Django](https://img.shields.io/badge/Django-5.2-green) ![django-allauth](https://img.shields.io/badge/django--allauth-0.45-orange) ![Open Source](https://img.shields.io/badge/Open%20Source-Yes-brightgreen)
 
 ![SocialStarter Screenshot](https://github.com/eriktaveras/SocialStarter/assets/10116703/88b2465a-9cd8-42df-813d-2c9aad9991f7)
 
-SocialStarter is an open-source project designed to serve as a template for building social networks. It includes core features such as posts, likes, comments, user relationships, and authentication, utilizing Django and django-allauth. Ideal for developers looking for a solid starting point for their social projects.
+SocialStarter is an open-source project designed to serve as a complete template for building modern social networks. It includes all essential features needed for a social platform, utilizing Django and a modern technology stack. This project is ideal for developers looking for a solid foundation to build upon, or for educational purposes to understand how social networks function under the hood.
 
 ## 🌟 Features
 
+### User Management
+- 🔒 Complete authentication system with django-allauth
+- 👤 Extended user profiles with customizable fields
+- 🖼️ Profile pictures and cover images
+- 📱 Responsive UI for mobile and desktop
+- 🔐 Password reset and account management
+
+### Content & Posts
 - 📝 Text, image, and video posts
+- 📊 News feed with algorithmic sorting
+- 🔄 Repost/share functionality
+- 📎 Attachment support
+- 🏷️ Tagging and mentions
+
+### Interactions
 - ❤️ Like and comment system
+- 📣 Nested comments and replies
+- 👍 Reaction system (like, love, etc.)
+- 💬 Rich text formatting in comments
+
+### Social Connections
 - 👥 User follow relationships (followers/following)
-- 🚀 Extended user profiles
-- 🔒 User authentication and registration with `django-allauth` (includes support for social auth)
+- 🔔 Friend/follow requests
+- 🚫 Block and mute functionality
+- 👁️ Privacy controls for content visibility
+
+### Messaging
+- 💌 Direct messaging between users
+- 📨 Inbox and conversation management
+- 👾 Emoji support in messages
+- 🔄 Real-time messaging with WebSockets
+
+### Notifications
+- 🔔 Real-time notifications
+- 📧 Email notifications
+- 🔕 Notification preferences
+- 📱 Push notification framework
+
+### Settings & Privacy
+- ⚙️ Comprehensive user settings
+- 🔒 Privacy controls
+- 🌙 Theme customization (dark/light mode)
+- 🌐 Language preferences
+
+### Admin Features
+- 🔧 Admin dashboard
+- 📊 User and content management
+- 📈 Basic analytics
+- 🚫 Moderation tools
 
 ## 🛠 Technologies Used
 
-- Django
-- django-allauth
-- PostgreSQL (or any other database of your choice)
-- Django Rest Framework (if applicable)
-- Tailwind CSS (if applicable)
+- **Backend**: Django 5.2, Python 3.8+
+- **Authentication**: django-allauth
+- **Real-time Features**: Django Channels, WebSockets
+- **Frontend**: Tailwind CSS, AlpineJS
+- **Database**: SQLite (development), PostgreSQL (recommended for production)
+- **API**: Django REST Framework
+- **Media Storage**: Django File Storage (configurable for cloud storage)
 
 ## ⚙️ Prerequisites
 
-Ensure you have Python 3.8+, Pip, and Virtualenv installed, as well as a running instance of PostgreSQL (or your preferred database) if you decide to use it.
+- Python 3.8 or higher
+- Pip package manager
+- Virtual environment tool (virtualenv or poetry)
+- Git
+- (Optional) PostgreSQL for production deployments
 
 ## 🚀 Project Setup
 
 ### 📦 Clone the Repository
 
 ```bash
-git clone https://your-repository-here.git
-cd project-name
+git clone https://github.com/eriktaveras/SocialStarter.git
+cd SocialStarter
 ```
 
 ### 🌐 Set Up Virtual Environment
 
-#### Virtualenv
-    ```bash
-    python -m venv venv
-    source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
-    ```
-#### poetry-python
-    ```bash
-    poetry init
-    poetry shell
-    ```
+#### Using Virtualenv
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+```
+
+#### Using Poetry
+```bash
+poetry install
+poetry shell
+```
+
 ### 📚 Install Dependencies
-#### virtualenv
-    ```bash
-    pip install -r requirements.txt
-    ```
-#### poetry-python
-    ```bash
-    poetry install
-        or
-    python install_requirements.py
-    ```
+```bash
+pip install -r requirements.txt
+```
 
 ### 🔑 Configure Environment Variables
 
-Create a `.env` file in the main project directory and add the following environment variables:
+Create a `.env` file in the main project directory with the following:
 
 ```plaintext
 SECRET_KEY=your_secret_key_here
 DEBUG=True  # Set to False in production
-DATABASE_URL=your_database_url
+DATABASE_URL=your_database_url_if_using_postgres
 ALLOWED_HOSTS=.localhost, .your-domain.com
+EMAIL_HOST=your_email_host
+EMAIL_PORT=your_email_port
+EMAIL_USE_TLS=True
+EMAIL_HOST_USER=your_email_user
+EMAIL_HOST_PASSWORD=your_email_password
 ```
 
-### 🗃 Migrations and Create Superuser
+### 🗃 Setup Database and Create Admin User
 
 ```bash
 python manage.py migrate
 python manage.py createsuperuser
 ```
 
-### 🏃 Run the Project
+### 🏃 Run the Development Server
 
 ```bash
 python manage.py runserver
 ```
 
-The development server will start at `http://127.0.0.1:8000/`.
+Access the application at `http://127.0.0.1:8000/`
 
-## 🔐 Using django-allauth
+## 📚 Documentation
 
-To configure `django-allauth` and enable social authentication, follow the [official django-allauth documentation](https://django-allauth.readthedocs.io/).
+Comprehensive documentation is available in the `docs/` directory, covering:
+- Detailed setup instructions
+- Architecture overview
+- Customization guide
+- Deployment recommendations
+- API documentation (if applicable)
 
-## 🤝 How to Contribute
+## 🤝 Contributing to SocialStarter
 
-If you wish to contribute to the project, please follow these steps:
+SocialStarter is an **open source project** and welcomes contributions from the community. Here's how you can contribute:
 
-1. Fork the repository.
-2. Create a feature branch (`git checkout -b feature-new-feature`).
-3. Make your changes and commit (`git commit -am 'Add some feature'`).
-4. Push to the branch (`git push origin feature-new-feature`).
-5. Create a new Pull Request.
+1. **Fork the repository** - Create your own copy of the project
+2. **Create a feature branch** - `git checkout -b feature/amazing-feature`
+3. **Commit your changes** - `git commit -m 'Add some amazing feature'`
+4. **Push to your branch** - `git push origin feature/amazing-feature`
+5. **Open a Pull Request** - Go to the original repository and create a PR
+
+### Contribution Guidelines
+- Follow the code style of the project
+- Write tests for your features when applicable
+- Keep pull requests focused on a single feature/fix
+- Document your code and any new functionality
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 📬 Contact
+
+Erik Taveras - [Website](https://www.eriktaveras.com) - [GitHub](https://github.com/eriktaveras)
+
+Project Link: [https://github.com/eriktaveras/SocialStarter](https://github.com/eriktaveras/SocialStarter)
+
+---
+
+⭐ If you find this project useful, please consider giving it a star on GitHub!

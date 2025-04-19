@@ -28,7 +28,11 @@ INSTALLED_APPS = [
     'feed',
     'relationship',
     'interactions',
-
+    'messaging',
+    'notifications',
+    'channels',
+    'settings.apps.SettingsConfig',
+    'rest_framework',
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -66,6 +70,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'main.wsgi.application'
+ASGI_APPLICATION = 'main.asgi.application'
 
 DATABASES = {
     'default': {
@@ -124,3 +129,13 @@ EMAIL_PORT = os.getenv('EMAIL_PORT')
 EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS') == 'True'
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+
+# Channels configuration
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}

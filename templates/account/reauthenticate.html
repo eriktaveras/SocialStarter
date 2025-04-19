@@ -1,0 +1,38 @@
+{% extends "account/base_reauthenticate.html" %}
+
+{% load i18n %}
+
+{% block reauthenticate_content %}
+    <form method="post" action="{% url 'account_reauthenticate' %}">
+        {% csrf_token %}
+        
+        {% if form.non_field_errors %}
+            <div class="p-3 mb-4 bg-red-900/50 border border-red-700 rounded-md text-text-light text-sm">
+                {% for error in form.non_field_errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        <div class="mb-4">
+            <label class="block font-medium text-sm text-text-light mb-1" for="password">{% trans "Password" %}</label>
+            <div class="relative">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-text-muted">
+                    <i class="fas fa-lock"></i>
+                </span>
+                <input type="password" name="password" id="password" placeholder="{% trans 'Enter your password' %}" 
+                       class="w-full pl-10 px-4 py-2 rounded-md bg-dark border border-gray-700 text-text-light focus:outline-none focus:ring-2 focus:ring-primary" 
+                       autocomplete="current-password" required>
+            </div>
+            {% if form.password.errors %}
+                <p class="text-red-400 text-xs mt-1">{{ form.password.errors.as_text }}</p>
+            {% endif %}
+        </div>
+        
+        <button type="submit" class="w-full py-3 font-medium text-text-light bg-primary rounded-md hover:bg-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+            {% trans "Confirm" %}
+        </button>
+        
+        <input type="hidden" name="next" value="{{ next }}" />
+    </form>
+{% endblock %} 

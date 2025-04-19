@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Account Inactive | SocialStarter{% endblock %}
+
+{% load i18n %}
+
+{% block content %}
+<div class="flex items-center justify-center min-h-[80vh]">
+    <div class="px-8 py-6 text-left bg-dark-light shadow-lg rounded-lg max-w-md w-full">
+        <div class="mb-6 text-center">
+            <i class="fas fa-user-lock text-primary text-4xl mb-2"></i>
+            <h3 class="text-2xl font-bold text-text-light">{% trans "Account Inactive" %}</h3>
+            <p class="text-text-muted text-sm mt-2">
+                {% trans "This account is currently inactive." %}
+            </p>
+        </div>
+        
+        <div class="text-center mt-6">
+            <p class="text-sm text-text-light mb-6">
+                {% trans "Please contact us if you have any trouble accessing your account." %}
+            </p>
+            <a href="{% url 'account_login' %}" class="w-full inline-block py-3 font-medium text-text-light bg-primary rounded-md hover:bg-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                {% trans "Back to Login" %}
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %} 

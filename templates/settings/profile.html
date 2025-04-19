@@ -1,0 +1,88 @@
+{% extends "settings/base.html" %}
+{% load i18n %}
+
+{% block settings_title %}{% trans "Profile Settings" %}{% endblock %}
+
+{% block settings_content %}
+<form method="post" enctype="multipart/form-data" class="space-y-6">
+    {% csrf_token %}
+    
+    {% if form.non_field_errors %}
+        <div class="p-3 bg-red-900/50 border border-red-700 rounded-md text-text-light text-sm">
+            {% for error in form.non_field_errors %}
+                {{ error }}
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    <!-- Profile Picture -->
+    <div>
+        <label class="block text-sm font-medium text-text-light mb-3">{% trans "Profile Picture" %}</label>
+        <div class="flex items-center space-x-5">
+            <img src="{{ user.profile.avatar_url|default:'https://via.placeholder.com/150' }}" 
+                 class="w-20 h-20 rounded-full object-cover border-2 border-primary/30" 
+                 alt="{{ user.username }}">
+            
+            <label class="cursor-pointer bg-dark-light hover:bg-dark px-4 py-2 rounded-lg text-sm">
+                <span>{% trans "Upload New Photo" %}</span>
+                <input type="file" name="avatar" class="hidden" accept="image/*">
+            </label>
+        </div>
+        {% if form.avatar.errors %}
+            <p class="mt-1 text-sm text-red-400">{{ form.avatar.errors.0 }}</p>
+        {% endif %}
+    </div>
+    
+    <!-- Basic Info -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+            <label for="id_display_name" class="block text-sm font-medium text-text-light mb-1">{% trans "Display Name" %}</label>
+            <input type="text" name="display_name" id="id_display_name" 
+                   value="{{ form.display_name.value|default:user.username|default:'' }}"
+                   class="w-full px-4 py-2 rounded-md bg-dark border border-gray-700 text-text-light focus:outline-none focus:ring-2 focus:ring-primary">
+            {% if form.display_name.errors %}
+                <p class="mt-1 text-sm text-red-400">{{ form.display_name.errors.0 }}</p>
+            {% endif %}
+        </div>
+        
+        <div>
+            <label for="id_location" class="block text-sm font-medium text-text-light mb-1">{% trans "Location" %}</label>
+            <input type="text" name="location" id="id_location" 
+                   value="{{ form.location.value|default:user.profile.location|default:'' }}"
+                   class="w-full px-4 py-2 rounded-md bg-dark border border-gray-700 text-text-light focus:outline-none focus:ring-2 focus:ring-primary">
+            {% if form.location.errors %}
+                <p class="mt-1 text-sm text-red-400">{{ form.location.errors.0 }}</p>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Bio -->
+    <div>
+        <label for="id_bio" class="block text-sm font-medium text-text-light mb-1">{% trans "Bio" %}</label>
+        <textarea name="bio" id="id_bio" rows="3" 
+                  class="w-full px-4 py-2 rounded-md bg-dark border border-gray-700 text-text-light focus:outline-none focus:ring-2 focus:ring-primary">{{ form.bio.value|default:user.profile.bio|default:'' }}</textarea>
+        {% if form.bio.errors %}
+            <p class="mt-1 text-sm text-red-400">{{ form.bio.errors.0 }}</p>
+        {% endif %}
+        <p class="text-xs text-text-muted mt-1">{% trans "Brief description about yourself. Max 160 characters." %}</p>
+    </div>
+    
+    <!-- Website -->
+    <div>
+        <label for="id_website" class="block text-sm font-medium text-text-light mb-1">{% trans "Website" %}</label>
+        <input type="url" name="website" id="id_website" 
+               value="{{ form.website.value|default:'' }}"
+               class="w-full px-4 py-2 rounded-md bg-dark border border-gray-700 text-text-light focus:outline-none focus:ring-2 focus:ring-primary">
+        {% if form.website.errors %}
+            <p class="mt-1 text-sm text-red-400">{{ form.website.errors.0 }}</p>
+        {% endif %}
+    </div>
+    
+    <!-- Submit Button -->
+    <div class="pt-4 border-t border-dark/10">
+        <button type="submit" class="px-5 py-2 bg-primary text-white font-medium rounded-lg hover:bg-blue-600 transition">
+            {% trans "Save Changes" %}
+        </button>
+    </div>
+</form>
+{% endblock %} 

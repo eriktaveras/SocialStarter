@@ -1,83 +1,419 @@
 {% extends "base.html" %}
 
-{% block title %}Feed{% endblock %}
+{% block title %}Feed | SocialStarter{% endblock %}
 
 {% block content %}
-<div class="bg-[#15202b] min-h-screen">
-    <div class="container mx-auto px-4">
-        <div class="max-w-2xl mx-auto bg-[#192734] p-5 rounded-lg shadow mt-10">
-            <form method="post" action="{% url 'posts:crear_post' %}" enctype="multipart/form-data" class="mb-6">
-                {% csrf_token %}
-                <div class="mb-6">
-                    <label for="post_text" class="block text-white text-sm font-bold mb-2">¿Qué estás pensando?</label>
-                    <textarea id="post_text" name="text" rows="3" class="shadow-sm focus:ring-blue-500 focus:border-blue-500 mt-1 block w-full sm:text-sm border-gray-600 bg-[#192734] text-white rounded-md" placeholder="Comparte algo..."></textarea>
+<div class="max-w-4xl mx-auto">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Left sidebar - Only visible on desktop -->
+        <div class="hidden md:block">
+            <div class="bg-secondary rounded-xl shadow-lg overflow-hidden mb-6">
+                <div class="p-4">
+                    <h2 class="font-bold text-lg mb-4">Quick Links</h2>
+                    <ul class="space-y-2">
+                        <li>
+                            <a href="{% url 'users:view_profile' user.username %}" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-dark-light transition">
+                                <i class="fas fa-user text-primary"></i>
+                                <span>My Profile</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-dark-light transition">
+                                <i class="fas fa-bell text-primary"></i>
+                                <span>Notifications</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-dark-light transition">
+                                <i class="fas fa-bookmark text-primary"></i>
+                                <span>Saved Posts</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-dark-light transition">
+                                <i class="fas fa-cog text-primary"></i>
+                                <span>Settings</span>
+                            </a>
+                        </li>
+                    </ul>
                 </div>
+            </div>
             
-                <!-- Botones de acción al final del formulario -->
-                <div class="flex items-center justify-between">
-                    <!-- Botón de adjuntar imagen/video -->
-                    <label class="flex items-center cursor-pointer text-blue-400 hover:text-blue-500 transition-colors duration-200 ease-in-out">
-                        <i class="fas fa-upload mr-2"></i> Subir imagen/video
-                        <input type="file" name="image" class="hidden" />
-                    </label>
-                    
-                    <!-- Botón de publicar -->
-                    <button type="submit" class="flex justify-center items-center px-6 py-2 bg-blue-400 text-white font-medium rounded-md hover:bg-blue-500 transition-colors duration-200 ease-in-out">
-                        <i class="fas fa-paper-plane mr-2"></i> Publicar
-                    </button>
+            <div class="bg-secondary rounded-xl shadow-lg overflow-hidden">
+                <div class="p-4">
+                    <h2 class="font-bold text-lg mb-4">Suggested Users</h2>
+                    <div class="space-y-4">
+                        {% for i in "12345"|make_list %}
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <img src="https://via.placeholder.com/40" class="w-10 h-10 rounded-full" alt="User">
+                                <div>
+                                    <p class="font-medium">User{{ forloop.counter }}</p>
+                                    <p class="text-xs text-text-muted">@user{{ forloop.counter }}</p>
+                                </div>
+                            </div>
+                            <button class="text-xs bg-dark-light text-text-light px-3 py-1 rounded-full hover:bg-primary transition">Follow</button>
+                        </div>
+                        {% endfor %}
+                    </div>
                 </div>
-            </form>
+            </div>
         </div>
-
-        {% for post in posts %}
-        <div class="mb-8 p-6 bg-[#192734] rounded-lg shadow mt-5">
-            <div class="flex items-center mb-4">
-                <a href="{% url 'users:view_profile' username=post.user.username %}">
-                    <img class="h-10 w-10 rounded-full mr-4" src="{{ post.user.profile.avatar_url }}" alt="{{ post.user.username }}'s avatar" onerror="this.onerror=null; this.src='https://via.placeholder.com/150/CDCDCD/808080?Text=Digital%20Identity';">
-                </a>
-                <div>
-                    <a href="{% url 'users:view_profile' username=post.user.username %}" class="text-lg font-semibold text-white hover:underline">
-                        {{ post.user.username }}
-                    </a>
-                    <span class="text-gray-400 text-sm">{{ post.created_at|date:"F d, Y H:i" }}</span>
+        
+        <!-- Main feed section -->
+        <div class="md:col-span-2">
+            <!-- Post creation card -->
+            <div class="bg-secondary rounded-xl shadow-lg overflow-hidden mb-6">
+                <div class="p-4">
+                    <div class="flex items-start space-x-3">
+                        <img src="{{ user.profile.avatar_url|default:'https://via.placeholder.com/150' }}" class="w-12 h-12 rounded-full border-2 border-primary/30" alt="{{ user.username }}">
+                        <div class="flex-grow">
+                            <form method="post" action="{% url 'posts:crear_post' %}" enctype="multipart/form-data" class="w-full" id="post-creation-form">
+                                {% csrf_token %}
+                                <div class="mb-3 relative">
+                                    <textarea id="post_text" name="text" rows="3" 
+                                        class="w-full bg-dark-light text-text-light rounded-lg border-0 p-4 focus:ring-2 focus:ring-primary focus:outline-none text-base resize-none transition-all"
+                                        placeholder="What's happening?"></textarea>
+                                    
+                                    <!-- Character counter -->
+                                    <div class="absolute bottom-3 right-3 text-xs text-text-muted" id="char-counter">0/280</div>
+                                </div>
+                                
+                                <!-- Media preview area -->
+                                <div id="media-preview" class="hidden mb-3 relative rounded-lg overflow-hidden">
+                                    <img id="image-preview" class="w-full h-auto object-cover rounded-lg max-h-80" src="" alt="Media preview">
+                                    <button type="button" id="remove-media" class="absolute top-2 right-2 bg-dark/80 text-white p-2 rounded-full hover:bg-red-600 transition">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                
+                                <div class="flex items-center justify-between border-t border-dark/10 pt-3">
+                                    <div class="flex items-center space-x-3">
+                                        <label class="flex items-center cursor-pointer text-primary hover:text-blue-400 transition p-2 rounded-full hover:bg-dark-light">
+                                            <i class="fas fa-image text-lg"></i>
+                                            <input type="file" name="image" id="image-upload" class="hidden" accept="image/*,video/*">
+                                        </label>
+                                        
+                                        <button type="button" class="text-primary hover:text-blue-400 transition p-2 rounded-full hover:bg-dark-light" id="emoji-button">
+                                            <i class="far fa-smile text-lg"></i>
+                                        </button>
+                                        
+                                        <button type="button" class="text-primary hover:text-blue-400 transition p-2 rounded-full hover:bg-dark-light">
+                                            <i class="fas fa-poll-h text-lg"></i>
+                                        </button>
+                                    </div>
+                                    
+                                    <button type="submit" id="post-button" class="px-5 py-2 bg-primary text-white font-medium rounded-full hover:bg-blue-600 transition flex items-center disabled:opacity-50 disabled:cursor-not-allowed">
+                                        <span class="mr-1">Post</span>
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <p class="text-gray-300 mb-4">{{ post.text }}</p>
-            {% if post.image %}
-            <div class="mb-4">
-                <img src="{{ post.image.url }}" alt="Imagen del post" class="max-w-full h-auto rounded-lg">
-            </div>
-            {% endif %}
-            <div class="flex items-center justify-between text-gray-400">
-                {% if request.user in post.likes.all %}
-                <a href="{% url 'interactions:like_post' post.id %}" class="flex items-center hover:text-red-600">
-                    <i class="fas fa-heart"></i> <span class="ml-1">{{ post.likes.count }}</span>
-                </a>
-                {% else %}
-                <a href="{% url 'interactions:like_post' post.id %}" class="flex items-center hover:text-blue-400">
-                    <i class="far fa-heart"></i> <span class="ml-1">{{ post.likes.count }}</span>
-                </a>
-                {% endif %}
-                <a href="{% url 'interactions:comment_post' post.id %}" class="flex items-center hover:text-gray-300">
-                    <i class="far fa-comment"></i> <span class="ml-1">{{ post.comments.count }} Comentar</span>
-                </a>
-            </div>
-            {% if post.comments.all %}
-            <div class="mt-4 bg-[#162D40] p-4 rounded">
-                <h3 class="text-sm font-semibold mb-2 text-white">Comentarios:</h3>
-                {% for comment in post.comments.all %}
-                <div class="mb-2 text-gray-300">
-                    <p><strong>{{ comment.user.username }}:</strong> {{ comment.text }}</p>
+            
+            <!-- Posts feed -->
+            <div id="posts-container">
+                {% for post in posts %}
+                <div class="bg-secondary rounded-xl shadow-lg overflow-hidden mb-6 transition hover:shadow-xl">
+                    <div class="p-5">
+                        <!-- Post header with user info -->
+                        <div class="flex items-center space-x-3 mb-4">
+                            <a href="{% url 'users:view_profile' username=post.user.username %}">
+                                <img src="{{ post.user.profile.avatar_url|default:'https://via.placeholder.com/150' }}" 
+                                    class="w-10 h-10 rounded-full" 
+                                    alt="{{ post.user.username }}">
+                            </a>
+                            <div>
+                                <a href="{% url 'users:view_profile' username=post.user.username %}" 
+                                    class="font-semibold hover:underline">{{ post.user.username }}</a>
+                                <p class="text-xs text-text-muted">{{ post.created_at|date:"F d, Y • H:i" }}</p>
+                            </div>
+                            <!-- Post options button -->
+                            <div class="ml-auto relative" x-data="{ open: false }" @click.away="open = false">
+                                <button @click="open = !open" class="text-text-muted hover:text-text-light p-1">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </button>
+                                <div x-show="open" class="absolute right-0 mt-2 w-48 bg-dark-light rounded-md shadow-lg py-1 z-40" style="display: none;">
+                                    <a href="#" class="block px-4 py-2 text-sm hover:bg-secondary">Copy link</a>
+                                    {% if user == post.user %}
+                                    <a href="#" class="block px-4 py-2 text-sm hover:bg-secondary">Edit post</a>
+                                    <a href="#" class="block px-4 py-2 text-sm text-red-500 hover:bg-secondary">Delete post</a>
+                                    {% else %}
+                                    <a href="#" class="block px-4 py-2 text-sm hover:bg-secondary">Report post</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Post content -->
+                        <div class="mb-4">
+                            <p class="text-text-light whitespace-pre-line">{{ post.text }}</p>
+                        </div>
+                        
+                        <!-- Post image if available -->
+                        {% if post.image %}
+                        <div class="mb-4 rounded-lg overflow-hidden">
+                            <img src="{{ post.image.url }}" alt="Post image" class="w-full h-auto object-cover">
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Post interaction buttons -->
+                        <div class="flex items-center justify-between text-text-muted text-sm">
+                            <div class="flex items-center space-x-4">
+                                <a href="{% url 'interactions:like_post' post.id %}" class="flex items-center space-x-1 hover:text-red-500 like-button" data-post-id="{{ post.id }}">
+                                    {% if request.user in post.likes.all %}
+                                    <i class="fas fa-heart text-red-500"></i>
+                                    {% else %}
+                                    <i class="far fa-heart"></i>
+                                    {% endif %}
+                                    <span class="like-count">{{ post.likes.count }}</span>
+                                </a>
+                                <a href="{% url 'interactions:comment_post' post.id %}" class="flex items-center space-x-1 hover:text-primary">
+                                    <i class="far fa-comment"></i>
+                                    <span>{{ post.comments.count }}</span>
+                                </a>
+                            </div>
+                            <button class="hover:text-primary">
+                                <i class="fas fa-share"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Comments section if there are comments -->
+                    {% if post.comments.all %}
+                    <div class="bg-dark-light p-4">
+                        <h3 class="text-sm font-semibold mb-3">Comments ({{ post.comments.count }})</h3>
+                        {% for comment in post.comments.all|slice:":3" %}
+                        <div class="flex items-start space-x-3 mb-3">
+                            <img src="{{ comment.user.profile.avatar_url|default:'https://via.placeholder.com/150' }}" class="w-8 h-8 rounded-full" alt="{{ comment.user.username }}">
+                            <div class="flex-1">
+                                <div class="bg-secondary p-3 rounded-lg">
+                                    <a href="{% url 'users:view_profile' username=comment.user.username %}" class="font-semibold text-sm hover:underline">{{ comment.user.username }}</a>
+                                    <p class="text-sm">{{ comment.text }}</p>
+                                </div>
+                                <div class="flex items-center mt-1 space-x-4 text-xs text-text-muted">
+                                    <span>{{ comment.created_at|date:"M d, H:i" }}</span>
+                                    <button class="hover:text-text-light">Like</button>
+                                    <button class="hover:text-text-light">Reply</button>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        
+                        {% if post.comments.count > 3 %}
+                        <a href="#" class="text-sm text-primary hover:underline">View all {{ post.comments.count }} comments</a>
+                        {% endif %}
+                        
+                        <!-- Comment form -->
+                        <form method="post" action="{% url 'interactions:comment_post' post.id %}" class="mt-3 flex">
+                            {% csrf_token %}
+                            <input type="text" name="text" placeholder="Add a comment..." class="flex-1 bg-secondary border-0 rounded-l-lg p-2 focus:ring-2 focus:ring-primary focus:outline-none">
+                            <button type="submit" class="bg-primary text-white px-4 rounded-r-lg hover:bg-blue-600 transition">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </form>
+                    </div>
+                    {% else %}
+                    <!-- Comment form if no comments -->
+                    <div class="bg-dark-light p-4">
+                        <form method="post" action="{% url 'interactions:comment_post' post.id %}" class="flex">
+                            {% csrf_token %}
+                            <input type="text" name="text" placeholder="Add a comment..." class="flex-1 bg-secondary border-0 rounded-l-lg p-2 focus:ring-2 focus:ring-primary focus:outline-none">
+                            <button type="submit" class="bg-primary text-white px-4 rounded-r-lg hover:bg-blue-600 transition">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </form>
+                    </div>
+                    {% endif %}
+                </div>
+                {% empty %}
+                <div class="bg-secondary rounded-xl shadow-lg p-10 text-center">
+                    <div class="mb-4">
+                        <i class="fas fa-stream text-5xl text-primary opacity-50"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">No posts yet</h3>
+                    <p class="text-text-muted mb-6">Follow some users to see their posts in your feed</p>
+                    <a href="#" class="px-6 py-3 bg-primary text-white font-medium rounded-full hover:bg-blue-600 transition inline-block">
+                        Discover users
+                    </a>
                 </div>
                 {% endfor %}
             </div>
+            
+            <!-- Load More button - Only show if there are posts and more to load -->
+            {% if posts and has_more %}
+            <div id="load-more-container" class="text-center my-8">
+                <button id="load-more-button" class="px-6 py-3 bg-secondary text-text-light font-medium rounded-full hover:bg-dark-light transition inline-flex items-center justify-center" data-page="2">
+                    <span>Load More</span>
+                    <i class="fas fa-spinner fa-spin ml-2 hidden" id="loading-spinner"></i>
+                </button>
+            </div>
             {% endif %}
         </div>
-        {% empty %}
-        <div class="text-center py-8">
-            <p class="text-gray-600">No hay publicaciones para mostrar.</p>
-        </div>
-        {% endfor %}
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Text area auto resize and character counter
+        const textarea = document.getElementById('post_text');
+        const charCounter = document.getElementById('char-counter');
+        const postButton = document.getElementById('post-button');
+        const MAX_CHARS = 280;
+        
+        if (textarea) {
+            textarea.addEventListener('input', function() {
+                // Update character counter
+                const remainingChars = this.value.length;
+                charCounter.textContent = `${remainingChars}/${MAX_CHARS}`;
+                
+                // Disable button if empty or exceeds limit
+                postButton.disabled = remainingChars === 0 || remainingChars > MAX_CHARS;
+                
+                // Style counter based on length
+                if (remainingChars > MAX_CHARS - 20 && remainingChars <= MAX_CHARS) {
+                    charCounter.classList.add('text-yellow-400');
+                    charCounter.classList.remove('text-red-400', 'text-text-muted');
+                } else if (remainingChars > MAX_CHARS) {
+                    charCounter.classList.add('text-red-400');
+                    charCounter.classList.remove('text-yellow-400', 'text-text-muted');
+                } else {
+                    charCounter.classList.add('text-text-muted');
+                    charCounter.classList.remove('text-yellow-400', 'text-red-400');
+                }
+                
+                // Auto resize textarea
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+            });
+            
+            // Set initial state of post button
+            postButton.disabled = true;
+        }
+        
+        // Image preview functionality
+        const fileInput = document.getElementById('image-upload');
+        const mediaPreview = document.getElementById('media-preview');
+        const imagePreview = document.getElementById('image-preview');
+        const removeMediaBtn = document.getElementById('remove-media');
+        
+        if (fileInput && mediaPreview && imagePreview) {
+            fileInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        imagePreview.src = e.target.result;
+                        mediaPreview.classList.remove('hidden');
+                        // Enable post button if there's media even without text
+                        postButton.disabled = false;
+                    }
+                    
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+            
+            // Remove media button
+            if (removeMediaBtn) {
+                removeMediaBtn.addEventListener('click', function() {
+                    fileInput.value = '';
+                    mediaPreview.classList.add('hidden');
+                    imagePreview.src = '';
+                    
+                    // Reset post button state based on text
+                    const textLength = textarea.value.length;
+                    postButton.disabled = textLength === 0 || textLength > MAX_CHARS;
+                });
+            }
+        }
+        
+        // Emoji picker functionality (placeholder - would need a library in production)
+        const emojiButton = document.getElementById('emoji-button');
+        if (emojiButton && textarea) {
+            emojiButton.addEventListener('click', function() {
+                // This is just a simple example - in production use a proper emoji picker
+                const emojis = ['😀', '😂', '❤️', '👍', '🎉', '🔥', '💯', '🙏'];
+                const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+                
+                // Insert emoji at cursor position
+                const cursorPos = textarea.selectionStart;
+                const textBefore = textarea.value.substring(0, cursorPos);
+                const textAfter = textarea.value.substring(cursorPos);
+                
+                textarea.value = textBefore + randomEmoji + textAfter;
+                
+                // Trigger input event to update character count
+                textarea.dispatchEvent(new Event('input'));
+                
+                // Focus back on textarea and set cursor position after emoji
+                textarea.focus();
+                textarea.selectionStart = cursorPos + randomEmoji.length;
+                textarea.selectionEnd = cursorPos + randomEmoji.length;
+            });
+        }
+    });
+
+    // Load more functionality
+    const loadMoreButton = document.getElementById('load-more-button');
+    if (loadMoreButton) {
+        loadMoreButton.addEventListener('click', function() {
+            const spinner = document.getElementById('loading-spinner');
+            const currentPage = parseInt(this.getAttribute('data-page'));
+            
+            // Show spinner
+            spinner.classList.remove('hidden');
+            
+            // Fetch more posts - Updated URL to use the correct namespace
+            fetch(`{% url 'feed:load_more' %}?page=${currentPage}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Hide spinner
+                spinner.classList.add('hidden');
+                
+                if (data.html) {
+                    // Append new posts to the container
+                    const postsContainer = document.getElementById('posts-container');
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = data.html;
+                    
+                    // Append each child individually to ensure event handlers are properly set up
+                    while (tempDiv.firstChild) {
+                        postsContainer.appendChild(tempDiv.firstChild);
+                    }
+                    
+                    // Update the page number for the next request
+                    loadMoreButton.setAttribute('data-page', currentPage + 1);
+                    
+                    // Hide the load more button if there are no more posts
+                    if (!data.has_more) {
+                        document.getElementById('load-more-container').classList.add('hidden');
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error loading more posts:', error);
+                spinner.classList.add('hidden');
+                
+                // Show error message
+                const loadMoreContainer = document.getElementById('load-more-container');
+                loadMoreContainer.innerHTML = `
+                    <div class="text-red-500 my-2">
+                        <i class="fas fa-exclamation-circle mr-2"></i>
+                        Failed to load more posts. <button class="underline hover:text-red-600" onclick="location.reload()">Try refreshing</button>.
+                    </div>
+                `;
+            });
+        });
+    }
+</script>
 {% endblock %}

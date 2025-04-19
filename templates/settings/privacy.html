@@ -1,0 +1,154 @@
+{% extends "settings/base.html" %}
+{% load i18n %}
+
+{% block settings_title %}{% trans "Privacy Settings" %}{% endblock %}
+
+{% block settings_content %}
+<form method="post" class="space-y-6">
+    {% csrf_token %}
+    
+    {% if form.non_field_errors %}
+        <div class="p-3 bg-red-900/50 border border-red-700 rounded-md text-text-light text-sm">
+            {% for error in form.non_field_errors %}
+                {{ error }}
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    <!-- Profile Privacy -->
+    <div class="space-y-3">
+        <h2 class="text-lg font-semibold text-text-light">{% trans "Profile Privacy" %}</h2>
+        
+        <div class="bg-dark-light p-4 rounded-lg space-y-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <label for="id_profile_visibility" class="block font-medium text-text-light">
+                        {% trans "Who can see my profile" %}
+                    </label>
+                    <p class="text-text-muted text-sm mt-1">
+                        {% trans "Control who can view your profile information" %}
+                    </p>
+                </div>
+                <select name="profile_visibility" id="id_profile_visibility" 
+                        class="bg-dark border border-gray-700 text-text-light rounded-lg focus:ring-primary focus:border-primary p-2">
+                    <option value="public" {% if user.profile.privacy_settings.profile_visibility == 'public' %}selected{% endif %}>
+                        {% trans "Everyone" %}
+                    </option>
+                    <option value="followers" {% if user.profile.privacy_settings.profile_visibility == 'followers' %}selected{% endif %}>
+                        {% trans "Followers only" %}
+                    </option>
+                    <option value="private" {% if user.profile.privacy_settings.profile_visibility == 'private' %}selected{% endif %}>
+                        {% trans "Nobody" %}
+                    </option>
+                </select>
+            </div>
+            
+            <div class="flex items-center">
+                <input type="checkbox" name="show_email" id="id_show_email" 
+                       class="h-4 w-4 text-primary bg-dark rounded border-gray-600 focus:ring-primary"
+                       {% if user.profile.privacy_settings.show_email %}checked{% endif %}>
+                <label for="id_show_email" class="ml-2 block text-text-light">
+                    {% trans "Show my email on my profile" %}
+                </label>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Content Privacy -->
+    <div class="space-y-3">
+        <h2 class="text-lg font-semibold text-text-light">{% trans "Content Privacy" %}</h2>
+        
+        <div class="bg-dark-light p-4 rounded-lg space-y-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <label for="id_post_visibility" class="block font-medium text-text-light">
+                        {% trans "Default post visibility" %}
+                    </label>
+                    <p class="text-text-muted text-sm mt-1">
+                        {% trans "Choose who can see your posts by default" %}
+                    </p>
+                </div>
+                <select name="post_visibility" id="id_post_visibility" 
+                        class="bg-dark border border-gray-700 text-text-light rounded-lg focus:ring-primary focus:border-primary p-2">
+                    <option value="public" {% if user.profile.privacy_settings.post_visibility == 'public' %}selected{% endif %}>
+                        {% trans "Everyone" %}
+                    </option>
+                    <option value="followers" {% if user.profile.privacy_settings.post_visibility == 'followers' %}selected{% endif %}>
+                        {% trans "Followers only" %}
+                    </option>
+                </select>
+            </div>
+            
+            <div class="flex items-center">
+                <input type="checkbox" name="allow_comments" id="id_allow_comments" 
+                       class="h-4 w-4 text-primary bg-dark rounded border-gray-600 focus:ring-primary"
+                       {% if user.profile.privacy_settings.allow_comments %}checked{% endif %}>
+                <label for="id_allow_comments" class="ml-2 block text-text-light">
+                    {% trans "Allow comments on my posts" %}
+                </label>
+            </div>
+            
+            <div class="flex items-center">
+                <input type="checkbox" name="show_activity" id="id_show_activity" 
+                       class="h-4 w-4 text-primary bg-dark rounded border-gray-600 focus:ring-primary"
+                       {% if user.profile.privacy_settings.show_activity %}checked{% endif %}>
+                <label for="id_show_activity" class="ml-2 block text-text-light">
+                    {% trans "Show my activity status" %}
+                </label>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Interaction Settings -->
+    <div class="space-y-3">
+        <h2 class="text-lg font-semibold text-text-light">{% trans "Interaction Settings" %}</h2>
+        
+        <div class="bg-dark-light p-4 rounded-lg space-y-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <label for="id_follower_approval" class="block font-medium text-text-light">
+                        {% trans "Follow requests" %}
+                    </label>
+                    <p class="text-text-muted text-sm mt-1">
+                        {% trans "Control who can follow you" %}
+                    </p>
+                </div>
+                <select name="follower_approval" id="id_follower_approval" 
+                        class="bg-dark border border-gray-700 text-text-light rounded-lg focus:ring-primary focus:border-primary p-2">
+                    <option value="open" {% if user.profile.privacy_settings.follower_approval == 'open' %}selected{% endif %}>
+                        {% trans "Anyone can follow" %}
+                    </option>
+                    <option value="approval" {% if user.profile.privacy_settings.follower_approval == 'approval' %}selected{% endif %}>
+                        {% trans "Require my approval" %}
+                    </option>
+                </select>
+            </div>
+            
+            <div class="flex items-center">
+                <input type="checkbox" name="allow_tagging" id="id_allow_tagging" 
+                       class="h-4 w-4 text-primary bg-dark rounded border-gray-600 focus:ring-primary"
+                       {% if user.profile.privacy_settings.allow_tagging %}checked{% endif %}>
+                <label for="id_allow_tagging" class="ml-2 block text-text-light">
+                    {% trans "Allow others to tag me in posts" %}
+                </label>
+            </div>
+            
+            <div class="flex items-center">
+                <input type="checkbox" name="allow_messages" id="id_allow_messages" 
+                       class="h-4 w-4 text-primary bg-dark rounded border-gray-600 focus:ring-primary"
+                       {% if user.profile.privacy_settings.allow_messages %}checked{% endif %}>
+                <label for="id_allow_messages" class="ml-2 block text-text-light">
+                    {% trans "Allow direct messages from non-followers" %}
+                </label>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Submit Button -->
+    <div class="pt-4 border-t border-dark/10">
+        <button type="submit" class="px-5 py-2 bg-primary text-white font-medium rounded-lg hover:bg-blue-600 transition">
+            {% trans "Save Changes" %}
+        </button>
+    </div>
+</form>
+{% endblock %} 

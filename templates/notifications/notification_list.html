@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Notifications | SocialStarter{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="bg-secondary rounded-xl shadow-lg overflow-hidden mb-6">
+        <div class="p-4 border-b border-gray-700 flex justify-between items-center">
+            <h1 class="text-xl font-bold">Notifications</h1>
+            {% if notifications %}
+            <a href="{% url 'notifications:mark_all_as_read' %}" class="text-primary hover:text-blue-400 text-sm">
+                Mark all as read
+            </a>
+            {% endif %}
+        </div>
+        
+        <div class="divide-y divide-gray-700">
+            {% for notification in notifications %}
+                <div class="p-4 {% if not notification.is_read %}bg-dark-light{% endif %} hover:bg-dark-light transition">
+                    <a href="{% url 'notifications:mark_as_read' notification.id %}?next={{ notification.url }}" class="block">
+                        <div class="flex items-start space-x-3">
+                            <!-- User avatar -->
+                            <img src="{{ notification.sender.profile.avatar_url|default:'https://via.placeholder.com/150' }}" 
+                                 class="w-10 h-10 rounded-full object-cover" 
+                                 alt="{{ notification.sender.username }}">
+                            
+                            <!-- Notification content -->
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-start justify-between">
+                                    <div>
+                                        <p class="text-text-light">
+                                            <span class="font-semibold">{{ notification.sender.username }}</span>
+                                            {{ notification.text }}
+                                        </p>
+                                        <span class="text-xs text-text-muted">{{ notification.created_at|date:"M d, Y, H:i" }}</span>
+                                    </div>
+                                    
+                                    <!-- Notification icon based on type -->
+                                    <div class="ml-3 text-lg">
+                                        {% if notification.notification_type == 'like' %}
+                                            <i class="fas fa-heart text-red-500"></i>
+                                        {% elif notification.notification_type == 'comment' %}
+                                            <i class="fas fa-comment text-blue-500"></i>
+                                        {% elif notification.notification_type == 'follow' %}
+                                            <i class="fas fa-user-plus text-green-500"></i>
+                                        {% elif notification.notification_type == 'message' %}
+                                            <i class="fas fa-envelope text-yellow-500"></i>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% empty %}
+                <div class="p-10 text-center">
+                    <div class="mb-4">
+                        <i class="fas fa-bell-slash text-5xl text-text-muted opacity-40"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">No notifications yet</h3>
+                    <p class="text-text-muted">You'll see notifications when someone interacts with you</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

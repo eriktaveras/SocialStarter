@@ -1,29 +1,97 @@
 {% extends "base.html" %}
 
+{% block title %}Edit Profile | SocialStarter{% endblock %}
+
 {% block content %}
-<div class="container mx-auto px-4 py-8">
-    <div class="max-w-xl mx-auto bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-        <h1 class="text-2xl font-semibold mb-6">Editar Perfil</h1>
-        <form method="post" class="space-y-4">
-            {% csrf_token %}
-            {% for field in form %}
-            <div>
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="{{ field.id_for_label }}">
-                    {{ field.label }}
-                </label>
-                {{ field }}
-                {% if field.help_text %}
-                <p class="text-sm text-gray-600">{{ field.help_text }}</p>
-                {% endif %}
-                {% for error in field.errors %}
-                <p class="text-red-500 text-xs italic">{{ error }}</p>
-                {% endfor %}
-            </div>
-            {% endfor %}
-            <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                Guardar Cambios
-            </button>
-        </form>
+<div class="max-w-2xl mx-auto">
+    <div class="bg-secondary rounded-xl shadow-lg overflow-hidden">
+        <div class="p-6">
+            <h1 class="text-2xl font-bold mb-6">Edit Profile</h1>
+            
+            <form method="post" enctype="multipart/form-data" class="space-y-6">
+                {% csrf_token %}
+                
+                <!-- Profile Image Preview -->
+                <div class="mb-8">
+                    <div class="flex items-center space-x-6">
+                        <div class="relative">
+                            <img src="{{ user.profile.avatar_url|default:'https://via.placeholder.com/150' }}" 
+                                class="w-24 h-24 rounded-full object-cover" 
+                                alt="{{ user.username }}">
+                            
+                            <label for="avatar" class="absolute bottom-0 right-0 cursor-pointer bg-primary text-white p-2 rounded-full hover:bg-blue-600 transition">
+                                <i class="fas fa-camera"></i>
+                                <input type="file" id="avatar" name="avatar" class="hidden" accept="image/*">
+                            </label>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-medium">Profile Photo</h3>
+                            <p class="text-text-muted text-sm">Upload a new profile photo</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Cover Image Preview -->
+                <div class="mb-8">
+                    <div class="relative w-full h-32 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg overflow-hidden mb-2">
+                        {% if user.profile.cover_image %}
+                        <img src="{{ user.profile.cover_image.url }}" class="w-full h-full object-cover" alt="Cover photo">
+                        {% endif %}
+                        
+                        <label for="cover_image" class="absolute top-2 right-2 cursor-pointer bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-70 transition">
+                            <i class="fas fa-camera"></i>
+                            <input type="file" id="cover_image" name="cover_image" class="hidden" accept="image/*">
+                        </label>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-medium">Cover Photo</h3>
+                        <p class="text-text-muted text-sm">Upload a new cover photo</p>
+                    </div>
+                </div>
+                
+                <!-- Bio -->
+                <div>
+                    <label for="{{ form.bio.id_for_label }}" class="block text-sm font-medium mb-2">Bio</label>
+                    <textarea id="{{ form.bio.id_for_label }}" name="{{ form.bio.name }}" 
+                        rows="4" 
+                        class="w-full bg-dark-light text-text-light rounded-lg border-0 p-3 focus:ring-2 focus:ring-primary focus:outline-none"
+                        placeholder="Tell something about yourself...">{{ form.bio.value|default:'' }}</textarea>
+                    {% if form.bio.errors %}
+                    <p class="text-red-500 text-sm mt-1">{{ form.bio.errors|join:", " }}</p>
+                    {% endif %}
+                </div>
+                
+                <!-- Location -->
+                <div>
+                    <label for="{{ form.location.id_for_label }}" class="block text-sm font-medium mb-2">Location</label>
+                    <input type="text" id="{{ form.location.id_for_label }}" name="{{ form.location.name }}" 
+                        value="{{ form.location.value|default:'' }}"
+                        class="w-full bg-dark-light text-text-light rounded-lg border-0 p-3 focus:ring-2 focus:ring-primary focus:outline-none"
+                        placeholder="Your location">
+                    {% if form.location.errors %}
+                    <p class="text-red-500 text-sm mt-1">{{ form.location.errors|join:", " }}</p>
+                    {% endif %}
+                </div>
+                
+                <!-- Birth Date -->
+                <div>
+                    <label for="{{ form.birth_date.id_for_label }}" class="block text-sm font-medium mb-2">Birth Date</label>
+                    <input type="date" id="{{ form.birth_date.id_for_label }}" name="{{ form.birth_date.name }}" 
+                        value="{{ form.birth_date.value|date:'Y-m-d'|default:'' }}"
+                        class="w-full bg-dark-light text-text-light rounded-lg border-0 p-3 focus:ring-2 focus:ring-primary focus:outline-none">
+                    {% if form.birth_date.errors %}
+                    <p class="text-red-500 text-sm mt-1">{{ form.birth_date.errors|join:", " }}</p>
+                    {% endif %}
+                </div>
+                
+                <!-- Save Button -->
+                <div class="flex justify-end">
+                    <button type="submit" class="px-6 py-2 bg-primary text-white font-medium rounded-full hover:bg-blue-600 transition">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %}

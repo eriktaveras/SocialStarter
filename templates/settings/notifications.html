@@ -1,0 +1,144 @@
+{% extends "settings/base.html" %}
+{% load i18n %}
+
+{% block settings_title %}{% trans "Notification Settings" %}{% endblock %}
+
+{% block settings_content %}
+<form method="post" class="space-y-6">
+    {% csrf_token %}
+    
+    {% if form.non_field_errors %}
+        <div class="p-3 bg-red-900/50 border border-red-700 rounded-md text-text-light text-sm">
+            {% for error in form.non_field_errors %}
+                {{ error }}
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    <!-- Push Notifications -->
+    <div class="space-y-3">
+        <h2 class="text-lg font-semibold text-text-light">{% trans "Push Notifications" %}</h2>
+        
+        <div class="bg-dark-light p-4 rounded-lg space-y-4">
+            <p class="text-text-muted text-sm">
+                {% trans "Control which notifications you receive while using the app or website." %}
+            </p>
+            
+            <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                    <label for="id_new_follower" class="text-text-light">{% trans "New followers" %}</label>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="new_follower" id="id_new_follower" 
+                               class="sr-only peer" 
+                               {% if user.notification_settings.new_follower %}checked{% endif %}>
+                        <div class="w-11 h-6 bg-dark peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    </label>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <label for="id_new_like" class="text-text-light">{% trans "Likes on your posts" %}</label>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="new_like" id="id_new_like" 
+                               class="sr-only peer" 
+                               {% if user.notification_settings.new_like %}checked{% endif %}>
+                        <div class="w-11 h-6 bg-dark peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    </label>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <label for="id_new_comment" class="text-text-light">{% trans "Comments on your posts" %}</label>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="new_comment" id="id_new_comment" 
+                               class="sr-only peer" 
+                               {% if user.notification_settings.new_comment %}checked{% endif %}>
+                        <div class="w-11 h-6 bg-dark peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    </label>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <label for="id_new_message" class="text-text-light">{% trans "New messages" %}</label>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="new_message" id="id_new_message" 
+                               class="sr-only peer" 
+                               {% if user.notification_settings.new_message %}checked{% endif %}>
+                        <div class="w-11 h-6 bg-dark peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    </label>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <label for="id_mention" class="text-text-light">{% trans "Mentions" %}</label>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="mention" id="id_mention" 
+                               class="sr-only peer" 
+                               {% if user.notification_settings.mention %}checked{% endif %}>
+                        <div class="w-11 h-6 bg-dark peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Email Notifications -->
+    <div class="space-y-3">
+        <h2 class="text-lg font-semibold text-text-light">{% trans "Email Notifications" %}</h2>
+        
+        <div class="bg-dark-light p-4 rounded-lg space-y-4">
+            <p class="text-text-muted text-sm">
+                {% trans "Control which notifications you receive via email." %}
+            </p>
+            
+            <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                    <label for="id_email_new_follower" class="text-text-light">{% trans "New followers" %}</label>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="email_new_follower" id="id_email_new_follower" 
+                               class="sr-only peer" 
+                               {% if user.notification_settings.email_new_follower %}checked{% endif %}>
+                        <div class="w-11 h-6 bg-dark peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    </label>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <label for="id_email_new_message" class="text-text-light">{% trans "New messages" %}</label>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="email_new_message" id="id_email_new_message" 
+                               class="sr-only peer" 
+                               {% if user.notification_settings.email_new_message %}checked{% endif %}>
+                        <div class="w-11 h-6 bg-dark peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    </label>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <label for="id_email_system" class="text-text-light">{% trans "System announcements" %}</label>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="email_system" id="id_email_system" 
+                               class="sr-only peer" 
+                               {% if user.notification_settings.email_system %}checked{% endif %}>
+                        <div class="w-11 h-6 bg-dark peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    </label>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <div>
+                        <label for="id_email_digest" class="text-text-light">{% trans "Weekly digest" %}</label>
+                        <p class="text-text-muted text-xs">{% trans "Receive a weekly summary of activity" %}</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="email_digest" id="id_email_digest" 
+                               class="sr-only peer" 
+                               {% if user.notification_settings.email_digest %}checked{% endif %}>
+                        <div class="w-11 h-6 bg-dark peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Submit Button -->
+    <div class="pt-4 border-t border-dark/10">
+        <button type="submit" class="px-5 py-2 bg-primary text-white font-medium rounded-lg hover:bg-blue-600 transition">
+            {% trans "Save Changes" %}
+        </button>
+    </div>
+</form>
+{% endblock %} 

@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Conversation with {{ other_user.username }} | SocialStarter{% endblock %}
+
+{% block extra_head %}
+<style>
+    .message-container {
+        max-height: 60vh;
+        overflow-y: auto;
+    }
+    .message {
+        max-width: 70%;
+    }
+    .message.sent {
+        align-self: flex-end;
+        background-color: #1a91da; /* primary color */
+    }
+    .message.received {
+        align-self: flex-start;
+        background-color: #22303c; /* dark-light color */
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="bg-secondary rounded-xl shadow-lg overflow-hidden mb-6">
+        <!-- Conversation header -->
+        <div class="p-4 border-b border-gray-700 flex items-center space-x-3">
+            <a href="{% url 'messaging:inbox' %}" class="text-text-light hover:text-primary">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <img src="{{ other_user.profile.avatar_url|default:'https://via.placeholder.com/150' }}" 
+                 class="w-10 h-10 rounded-full object-cover" 
+                 alt="{{ other_user.username }}">
+            <div>
+                <h1 class="font-bold">{{ other_user.username }}</h1>
+                <span id="typing-indicator" class="text-xs text-green-400 hidden">typing...</span>
+            </div>
+        </div>
+        
+        <!-- Messages container -->
+        <div id="messages-container" class="message-container p-4 flex flex-col space-y-4">
+            {% for message in messages %}
+                <div class="message {% if message.sender == request.user %}sent{% else %}received{% endif %} p-3 rounded-lg">
+                    <div class="flex justify-between items-baseline">
+                        <span class="font-semibold text-sm">
+                            {% if message.sender == request.user %}You{% else %}{{ message.sender.username }}{% endif %}
+                        </span>
+                        <span class="text-xs text-text-muted ml-2">{{ message.created_at|date:"H:i" }}</span>
+                    </div>
+                    <p class="mt-1 text-sm whitespace-pre-wrap">{{ message.content }}</p>
+                </div>
+            {% empty %}
+                <div class="text-center py-10 text-text-muted">
+                    <p>No messages yet. Start the conversation!</p>
+                </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Message form -->
+        <div class="border-t border-gray-700 p-4">
+            <div class="mb-2 flex justify-between items-center">
+                <div class="flex space-x-3">
+                    <button type="button" class="text-text-muted hover:text-primary" title="Attach file">
+                        <i class="fas fa-paperclip"></i>
+                    </button>
+                    <button type="button" class="text-text-muted hover:text-primary" title="Insert emoji">
+                        <i class="far fa-smile"></i>
+                    </button>
+                    <button type="button" class="text-text-muted hover:text-primary" title="Take photo">
+                        <i class="fas fa-camera"></i>
+                    </button>
+                </div>
+            </div>
+            <form id="message-form" method="post" class="flex items-end space-x-2">
+                {% csrf_token %}
+                <div class="flex-grow">
+                    {{ form.content }}
+                </div>
+                <button type="submit" class="bg-primary text-white p-3 px-4 rounded-lg hover:bg-blue-600 transition flex-shrink-0 flex items-center">
+                    <i class="fas fa-paper-plane mr-2"></i>
+                    <span>Send</span>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const messagesContainer = document.getElementById('messages-container');
+        const messageForm = document.getElementById('message-form');
+        const textarea = document.querySelector('textarea');
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        
+        // Scroll to bottom of messages
+        function scrollToBottom() {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+        
+        // Scroll to bottom initially
+        scrollToBottom();
+        
+        // Enable send message on Enter (but Shift+Enter for new line)
+        textarea.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                const content = this.value.trim();
+                if (content) {
+                    messageForm.dispatchEvent(new Event('submit'));
+                }
+            }
+        });
+        
+        // Handle form submission with AJAX
+        messageForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const messageContent = formData.get('content');
+            
+            // Don't send empty messages
+            if (!messageContent.trim()) {
+                return;
+            }
+            
+            // Add loading effect to send button
+            const sendButton = this.querySelector('button[type="submit"]');
+            const originalButtonContent = sendButton.innerHTML;
+            sendButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            sendButton.disabled = true;
+            
+            // Send message via AJAX
+            fetch('{% url "messaging:conversation_detail" conversation.id %}', {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': csrfToken
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Clear the form
+                    messageForm.reset();
+                    
+                    // Add the new message to the UI
+                    const messageElement = document.createElement('div');
+                    messageElement.className = 'message sent p-3 rounded-lg';
+                    messageElement.innerHTML = `
+                        <div class="flex justify-between items-baseline">
+                            <span class="font-semibold text-sm">You</span>
+                            <span class="text-xs text-text-muted ml-2">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                        </div>
+                        <p class="mt-1 text-sm whitespace-pre-wrap">${data.message.content}</p>
+                    `;
+                    
+                    messagesContainer.appendChild(messageElement);
+                    scrollToBottom();
+                    
+                    // Reset textarea height
+                    textarea.style.height = 'auto';
+                }
+            })
+            .catch(error => {
+                console.error('Error sending message:', error);
+            })
+            .finally(() => {
+                // Restore button
+                sendButton.innerHTML = originalButtonContent;
+                sendButton.disabled = false;
+                textarea.focus();
+            });
+        });
+        
+        // Auto-resize textarea
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+        
+        // Focus on textarea when page loads
+        textarea.focus();
+    });
+</script>
+{% endblock %} 

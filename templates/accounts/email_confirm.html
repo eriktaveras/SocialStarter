@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Confirm Email | SocialStarter{% endblock %}
+
+{% load i18n %}
+{% load account %}
+
+{% block content %}
+<div class="flex items-center justify-center min-h-[80vh]">
+    <div class="px-8 py-6 text-left bg-dark-light shadow-lg rounded-lg max-w-md w-full">
+        <div class="mb-6 text-center">
+            <i class="fas fa-envelope-circle-check text-primary text-4xl mb-2"></i>
+            <h3 class="text-2xl font-bold text-text-light">Confirm Email</h3>
+            
+            {% if confirmation %}
+                {% user_display confirmation.email_address.user as user_display %}
+                
+                <p class="text-text-muted text-sm mt-2">
+                    {% blocktrans with confirmation.email_address.email as email %}Please confirm that <span class="text-text-light">{{ email }}</span> is your email address.{% endblocktrans %}
+                </p>
+            {% else %}
+                <p class="text-text-muted text-sm mt-2">
+                    {% blocktrans %}This email confirmation link has expired or is invalid. Please request a new confirmation email.{% endblocktrans %}
+                </p>
+            {% endif %}
+        </div>
+        
+        {% if confirmation %}
+            <form method="post" action="{% url 'account_confirm_email' confirmation.key %}">
+                {% csrf_token %}
+                
+                <button type="submit" class="w-full py-3 font-medium text-text-light bg-primary rounded-md hover:bg-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                    {% trans 'Confirm' %}
+                </button>
+            </form>
+        {% else %}
+            <div class="text-center">
+                <a href="{% url 'account_email' %}" class="w-full inline-block py-3 font-medium text-text-light bg-primary rounded-md hover:bg-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                    {% trans 'Request New Confirmation Email' %}
+                </a>
+            </div>
+        {% endif %}
+        
+        <div class="mt-6 text-center">
+            <p class="text-sm text-text-muted">{% trans "Having trouble?" %} <a href="#" class="text-primary hover:text-blue-400 transition">{% trans "Contact us" %}</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %} 

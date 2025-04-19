@@ -1,38 +1,68 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="flex items-center justify-center min-h-screen bg-gray-800">
-    <div class="px-8 py-6 mt-4 text-left bg-gray-900 text-gray-100 shadow-lg rounded-lg max-w-sm">
-        <h3 class="text-2xl font-bold text-center">Login to your account</h3>
+<div class="flex items-center justify-center min-h-[80vh]">
+    <div class="px-8 py-6 text-left bg-dark-light shadow-lg rounded-lg max-w-md w-full">
+        <div class="mb-6 text-center">
+            <i class="fas fa-globe text-primary text-4xl mb-2"></i>
+            <h3 class="text-2xl font-bold text-text-light">Welcome back</h3>
+            <p class="text-text-muted text-sm">Login to your SocialStarter account</p>
+        </div>
+        
         <form method="post" action="{% url 'account_login' %}">
             {% csrf_token %}
             {% if form.non_field_errors %}
-                <div class="text-red-400 text-sm mt-2">
+                <div class="p-3 mb-4 bg-red-900/50 border border-red-700 rounded-md text-text-light text-sm">
                     {% for error in form.non_field_errors %}
                         {{ error }}
                     {% endfor %}
                 </div>
             {% endif %}
-            <div class="mt-4">
-                <label class="block font-medium text-sm text-gray-300" for="login">Email</label>
-                <input type="text" name="login" placeholder="Email" id="login" class="w-full px-4 py-2 mt-2 border rounded-md bg-gray-800 border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" autocomplete="username">
+            
+            <div class="mb-4">
+                <label class="block font-medium text-sm text-text-light mb-1" for="login">Email or Username</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-text-muted">
+                        <i class="fas fa-envelope"></i>
+                    </span>
+                    <input type="text" name="login" placeholder="Enter your email or username" id="login" 
+                           class="w-full pl-10 px-4 py-2 rounded-md bg-dark border border-gray-700 text-text-light focus:outline-none focus:ring-2 focus:ring-primary" 
+                           autocomplete="username">
+                </div>
                 {% if form.login.errors %}
-                    <p class="text-red-400 text-xs italic">{{ form.login.errors.as_text }}</p>
+                    <p class="text-red-400 text-xs mt-1">{{ form.login.errors.as_text }}</p>
                 {% endif %}
             </div>
-            <div class="mt-4">
-                <label class="block font-medium text-sm text-gray-300" for="password">Password</label>
-                <input type="password" name="password" placeholder="Password" id="password" class="w-full px-4 py-2 mt-2 border rounded-md bg-gray-800 border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" autocomplete="current-password">
+            
+            <div class="mb-4">
+                <label class="block font-medium text-sm text-text-light mb-1" for="password">Password</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-text-muted">
+                        <i class="fas fa-lock"></i>
+                    </span>
+                    <input type="password" name="password" placeholder="Enter your password" id="password" 
+                           class="w-full pl-10 px-4 py-2 rounded-md bg-dark border border-gray-700 text-text-light focus:outline-none focus:ring-2 focus:ring-primary" 
+                           autocomplete="current-password">
+                </div>
                 {% if form.password.errors %}
-                    <p class="text-red-400 text-xs italic">{{ form.password.errors.as_text }}</p>
+                    <p class="text-red-400 text-xs mt-1">{{ form.password.errors.as_text }}</p>
                 {% endif %}
             </div>
-            <div class="flex items-center justify-between mt-4">
-                <button type="submit" class="px-6 py-2 text-gray-900 bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:shadow-outline">Login</button>
-                <a href="{% url 'account_reset_password' %}" class="text-sm text-blue-400 hover:underline">Forgot password?</a>
+            
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center">
+                    <input type="checkbox" name="remember" id="remember" class="mr-2 bg-dark border-gray-700 rounded">
+                    <label for="remember" class="text-sm text-text-muted">Remember me</label>
+                </div>
+                <a href="{% url 'account_reset_password' %}" class="text-sm text-primary hover:text-blue-400 transition">Forgot password?</a>
             </div>
-            <div class="mt-4 text-center">
-                <p class="text-sm">Don't have an account? <a href="{% url 'account_signup' %}" class="text-blue-400 hover:underline">Sign up</a></p>
+            
+            <button type="submit" class="w-full py-3 font-medium text-text-light bg-primary rounded-md hover:bg-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                Sign In
+            </button>
+            
+            <div class="mt-6 text-center">
+                <p class="text-sm text-text-muted">Don't have an account? <a href="{% url 'account_signup' %}" class="text-primary hover:text-blue-400 transition">Sign up</a></p>
             </div>
         </form>
     </div>

@@ -1,0 +1,77 @@
+{% for post in liked_posts %}
+<div class="mb-6 border-b border-gray-700 pb-6 last:border-0 last:mb-0 last:pb-0 post-card">
+    <div class="flex items-center space-x-3 mb-4">
+        <img src="{{ post.user.profile.avatar_url|default:'https://via.placeholder.com/150' }}" 
+             class="w-10 h-10 rounded-full" 
+             alt="{{ post.user.username }}">
+        <div>
+            <a href="{% url 'users:view_profile' username=post.user.username %}" class="font-semibold hover:underline">
+                {{ post.user.username }}
+            </a>
+            <p class="text-xs text-text-muted">{{ post.created_at|date:"F d, Y • H:i" }}</p>
+        </div>
+    </div>
+    
+    <!-- Post content -->
+    <p class="text-text-light mb-4">{{ post.text }}</p>
+    
+    <!-- Post image -->
+    {% if post.image %}
+    <div class="mb-4 rounded-lg overflow-hidden">
+        <img src="{{ post.image.url }}" alt="Post image" class="w-full h-auto object-cover">
+    </div>
+    {% endif %}
+    
+    <!-- Post actions -->
+    <div class="flex items-center justify-between text-text-muted text-sm">
+        <div class="flex items-center space-x-4">
+            <a href="{% url 'interactions:like_post' post.id %}" class="flex items-center space-x-1 hover:text-red-500 like-button" data-post-id="{{ post.id }}">
+                {% if request.user in post.likes.all %}
+                <i class="fas fa-heart text-red-500"></i>
+                {% else %}
+                <i class="far fa-heart"></i>
+                {% endif %}
+                <span class="like-count">{{ post.likes.count }}</span>
+            </a>
+            <a href="{% url 'interactions:comment_post' post.id %}" class="flex items-center space-x-1 hover:text-primary">
+                <i class="far fa-comment"></i>
+                <span>{{ post.comments.count }}</span>
+            </a>
+        </div>
+        <button class="hover:text-primary">
+            <i class="fas fa-share"></i>
+        </button>
+    </div>
+    
+    <!-- Comments section if there are comments -->
+    {% if post.comments.all %}
+    <div class="mt-4 bg-dark-light p-4 rounded-lg">
+        <h3 class="text-sm font-semibold mb-2">Comments ({{ post.comments.count }})</h3>
+        {% for comment in post.comments.all|slice:":2" %}
+        <div class="flex items-start space-x-3 mb-2">
+            <img src="{{ comment.user.profile.avatar_url|default:'https://via.placeholder.com/150' }}" class="w-8 h-8 rounded-full" alt="{{ comment.user.username }}">
+            <div>
+                <div class="flex items-center">
+                    <a href="{% url 'users:view_profile' username=comment.user.username %}" class="font-semibold text-sm hover:underline">{{ comment.user.username }}</a>
+                    <span class="text-xs text-text-muted ml-2">{{ comment.created_at|date:"M d, H:i" }}</span>
+                </div>
+                <p class="text-sm text-text-light">{{ comment.text }}</p>
+            </div>
+        </div>
+        {% endfor %}
+        
+        {% if post.comments.count > 2 %}
+        <a href="#" class="text-xs text-primary hover:underline mt-2 block">View all {{ post.comments.count }} comments</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% empty %}
+<div class="text-center py-10">
+    <div class="mb-4">
+        <i class="fas fa-heart text-5xl text-text-muted opacity-40"></i>
+    </div>
+    <h3 class="text-xl font-bold mb-2">No liked posts yet</h3>
+    <p class="text-text-muted">When you like posts, they will appear here.</p>
+</div>
+{% endfor %} 

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Verification Email Sent | SocialStarter{% endblock %}
+
+{% load i18n %}
+{% load account %}
+
+{% block content %}
+<div class="flex items-center justify-center min-h-[80vh]">
+    <div class="px-8 py-6 text-left bg-dark-light shadow-lg rounded-lg max-w-md w-full">
+        <div class="mb-6 text-center">
+            <i class="fas fa-envelope-open-text text-primary text-4xl mb-2"></i>
+            <h3 class="text-2xl font-bold text-text-light">{% trans "Verification Email Sent" %}</h3>
+            <p class="text-text-muted text-sm">
+                {% blocktrans %}We have sent you a verification email. Please check your inbox and follow the link to confirm your email address.{% endblocktrans %}
+            </p>
+        </div>
+        
+        <div class="mt-6 text-center">
+            <p class="text-sm text-text-light mb-6">
+                {% blocktrans %}If you did not receive the verification email, please check your spam folder or contact us for assistance.{% endblocktrans %}
+            </p>
+            <a href="{% url 'account_email' %}" class="w-full inline-block py-3 font-medium text-text-light bg-primary rounded-md hover:bg-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                {% trans 'Manage Email Addresses' %}
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %} 

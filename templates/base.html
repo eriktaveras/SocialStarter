@@ -1,49 +1,181 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Mi Red Social{% endblock title %}</title>
-    <!-- Referencia a Tailwind CSS -->
+    <title>{% block title %}SocialStarter{% endblock title %}</title>
+    <!-- Modern UI with Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <!-- Extended configuration for Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1a91da',
+                        secondary: '#192734',
+                        dark: '#15202b',
+                        'dark-light': '#22303c',
+                        'text-light': '#f5f5f5',
+                        'text-muted': '#8899a6'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .notification-dot {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 8px;
+            height: 8px;
+            background-color: #f87171;
+            border-radius: 50%;
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
 </head>
-<body class="bg-[#15202b] text-white">
+<body class="bg-dark text-text-light min-h-screen flex flex-col">
+    <!-- Top navigation bar -->
+    <nav class="bg-secondary shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo and site name -->
+                <div class="flex items-center">
+                    <a href="/" class="flex items-center space-x-2">
+                        <i class="fas fa-globe text-primary text-xl"></i>
+                        <span class="text-xl font-semibold">SocialStarter</span>
+                    </a>
+                </div>
 
-<!-- Navegación -->
-<nav class="bg-[#192734] shadow">
-    <div class="container mx-auto px-6 py-3">
-        <div class="flex items-center justify-between">
-            <div>
-                <a href="/" class="text-xl font-semibold text-white">Mi Red Social</a>
-            </div>
-            <div>
-                {% if user.is_authenticated %}
-                <a href="{% url 'users:view_profile' user.username %}" class="px-3 py-2 rounded text-white hover:bg-[#15202b]">Perfil</a>
-                <a href="{% url 'feed:feed' %}" class="px-3 py-2 rounded text-white hover:bg-[#15202b]">Feed</a>
-                <a href="{% url 'account_logout' %}" class="px-3 py-2 rounded text-white hover:bg-[#15202b]">Logout</a>
-                {% else %}
-                <a href="{% url 'account_login' %}" class="px-3 py-2 rounded text-white hover:bg-[#15202b]">Login</a>
-                <a href="{% url 'account_signup' %}" class="px-3 py-2 rounded text-white hover:bg-[#15202b]">Sign Up</a>
-                {% endif %}
+                <!-- Search bar - visible on desktop, hidden on mobile -->
+                <div class="hidden md:block mx-4 flex-grow max-w-md">
+                    <div class="relative">
+                        <input type="text" placeholder="Search..." class="w-full bg-dark-light rounded-full py-2 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary">
+                        <button class="absolute right-0 top-0 mt-2 mr-4 text-text-muted">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Navigation links -->
+                <div class="flex items-center space-x-4">
+                    {% if user.is_authenticated %}
+                        <!-- Mobile search icon -->
+                        <button class="md:hidden text-text-light hover:text-primary">
+                            <i class="fas fa-search"></i>
+                        </button>
+                        
+                        <!-- Home -->
+                        <a href="{% url 'feed:feed' %}" class="text-text-light hover:text-primary p-2 relative">
+                            <i class="fas fa-home text-xl"></i>
+                        </a>
+                        
+                        <!-- Notifications -->
+                        <div class="relative" x-data="{ notificationsOpen: false }" @click.away="notificationsOpen = false">
+                            <button @click="notificationsOpen = !notificationsOpen" class="text-text-light hover:text-primary p-2 relative notification-bell">
+                                <i class="fas fa-bell text-xl"></i>
+                                <span id="notification-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
+                            </button>
+                            <div x-show="notificationsOpen" class="absolute right-0 mt-2 w-80 bg-dark-light rounded-md shadow-lg py-1 z-50 max-h-96 overflow-y-auto" style="display: none;">
+                                <div class="flex justify-between items-center px-4 py-2 border-b border-gray-700">
+                                    <h3 class="font-semibold">Notifications</h3>
+                                    <a href="{% url 'notifications:mark_all_as_read' %}" class="text-xs text-primary hover:text-blue-400">Mark all as read</a>
+                                </div>
+                                <div id="notification-list" class="divide-y divide-gray-700">
+                                    <div class="p-4 text-center text-gray-400">
+                                        <p>No new notifications</p>
+                                    </div>
+                                </div>
+                                <div class="border-t border-gray-700 p-2 text-center">
+                                    <a href="{% url 'notifications:notification_list' %}" class="text-xs text-primary hover:text-blue-400">View all notifications</a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Messages -->
+                        <a href="{% url 'messaging:inbox' %}" class="text-text-light hover:text-primary p-2 relative">
+                            <i class="fas fa-envelope text-xl"></i>
+                        </a>
+                        
+                        <!-- Profile dropdown -->
+                        <div class="relative" x-data="{ open: false }" @click.away="open = false">
+                            <button @click="open = !open" class="flex items-center focus:outline-none">
+                                <img src="{{ user.profile.avatar_url|default:'https://via.placeholder.com/150' }}" alt="Profile" class="h-8 w-8 rounded-full border border-gray-600">
+                            </button>
+                            <div x-show="open" class="absolute right-0 mt-2 w-48 bg-dark-light rounded-md shadow-lg py-1 z-50" style="display: none;">
+                                <a href="{% url 'users:view_profile' user.username %}" class="block px-4 py-2 text-sm hover:bg-secondary">Profile</a>
+                                <a href="{% url 'settings:profile' %}" class="block px-4 py-2 text-sm hover:bg-secondary">Settings</a>
+                                <div class="border-t border-gray-700"></div>
+                                <a href="{% url 'account_logout' %}" class="block px-4 py-2 text-sm hover:bg-secondary">Logout</a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'account_login' %}" class="px-4 py-2 rounded text-white hover:bg-dark-light transition">Login</a>
+                        <a href="{% url 'account_signup' %}" class="px-4 py-2 rounded bg-primary text-white hover:bg-blue-600 transition">Sign Up</a>
+                    {% endif %}
+                </div>
             </div>
         </div>
+    </nav>
+
+    <!-- Mobile bottom navigation - only for authenticated users -->
+    {% if user.is_authenticated %}
+    <div class="md:hidden fixed bottom-0 left-0 right-0 bg-secondary border-t border-gray-800 flex justify-around py-2 z-40">
+        <a href="{% url 'feed:feed' %}" class="text-center p-2">
+            <i class="fas fa-home text-xl"></i>
+        </a>
+        <a href="#" class="text-center p-2">
+            <i class="fas fa-search text-xl"></i>
+        </a>
+        <a href="{% url 'messaging:inbox' %}" class="text-center p-2">
+            <i class="fas fa-envelope text-xl"></i>
+        </a>
+        <a href="{% url 'users:view_profile' user.username %}" class="text-center p-2">
+            <i class="fas fa-user text-xl"></i>
+        </a>
+        <a href="{% url 'settings:profile' %}" class="text-center p-2">
+            <i class="fas fa-cog text-xl"></i>
+        </a>
     </div>
-</nav>
+    {% endif %}
 
-<!-- Contenido Principal -->
-<main class="container mx-auto px-6 py-8">
-    {% block content %}
-    <!-- El contenido específico de la página va aquí -->
-    {% endblock content %}
-</main>
+    <!-- Main content with padding for mobile nav if authenticated -->
+    <main class="container mx-auto px-4 py-6 flex-grow {% if user.is_authenticated %}pb-16 md:pb-6{% endif %}">
+        {% if messages %}
+        <div class="mb-4">
+            {% for message in messages %}
+            <div class="p-4 mb-4 rounded-md {% if message.tags == 'success' %}bg-green-800{% elif message.tags == 'error' %}bg-red-800{% else %}bg-blue-800{% endif %} text-white">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        {% block content %}
+        <!-- Page content goes here -->
+        {% endblock content %}
+    </main>
 
-<!-- Scripts -->
-{% block scripts %}
-<!-- Scripts opcionales que las páginas pueden añadir -->
-{% endblock scripts %}
+    <!-- AlpineJS for dropdown menus -->
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- Common JS -->
+    <script src="{% static 'js/interactions.js' %}"></script>
 
+    {% block scripts %}
+    <!-- Optional scripts that pages can add -->
+    {% endblock scripts %}
 </body>
 </html>

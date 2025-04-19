@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+
+{% block title %}Notifications | SocialStarter{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <div class="bg-secondary rounded-xl shadow-lg overflow-hidden">
+        <div class="p-4 border-b border-gray-700 flex justify-between items-center">
+            <h1 class="text-xl font-bold">Notifications</h1>
+            <div>
+                <button class="text-text-muted hover:text-text-light p-2">
+                    <i class="fas fa-check-double"></i> Mark all as read
+                </button>
+            </div>
+        </div>
+        
+        <!-- Notification filters -->
+        <div class="flex border-b border-gray-700" x-data="{ activeTab: 'all' }">
+            <button @click="activeTab = 'all'" :class="{ 'border-b-2 border-primary': activeTab === 'all' }" class="flex-1 py-3 font-medium focus:outline-none">
+                All
+            </button>
+            <button @click="activeTab = 'mentions'" :class="{ 'border-b-2 border-primary': activeTab === 'mentions' }" class="flex-1 py-3 font-medium focus:outline-none">
+                Mentions
+            </button>
+            <button @click="activeTab = 'likes'" :class="{ 'border-b-2 border-primary': activeTab === 'likes' }" class="flex-1 py-3 font-medium focus:outline-none">
+                Likes
+            </button>
+            <button @click="activeTab = 'follows'" :class="{ 'border-b-2 border-primary': activeTab === 'follows' }" class="flex-1 py-3 font-medium focus:outline-none">
+                Follows
+            </button>
+        </div>
+        
+        <div class="divide-y divide-gray-700">
+            <!-- Example notifications - Replace with actual data -->
+            {% for notification in notifications|default:'' %}
+            <div class="p-4 hover:bg-dark-light flex items-start space-x-3 {% if not notification.read %}bg-dark bg-opacity-40{% endif %}">
+                <!-- Notification icon based on type -->
+                <div class="mt-1">
+                    {% if notification.type == 'like' %}
+                    <span class="text-red-500 flex items-center justify-center w-10 h-10 rounded-full bg-red-500 bg-opacity-10">
+                        <i class="fas fa-heart"></i>
+                    </span>
+                    {% elif notification.type == 'comment' %}
+                    <span class="text-blue-500 flex items-center justify-center w-10 h-10 rounded-full bg-blue-500 bg-opacity-10">
+                        <i class="fas fa-comment"></i>
+                    </span>
+                    {% elif notification.type == 'follow' %}
+                    <span class="text-green-500 flex items-center justify-center w-10 h-10 rounded-full bg-green-500 bg-opacity-10">
+                        <i class="fas fa-user-plus"></i>
+                    </span>
+                    {% else %}
+                    <span class="text-yellow-500 flex items-center justify-center w-10 h-10 rounded-full bg-yellow-500 bg-opacity-10">
+                        <i class="fas fa-bell"></i>
+                    </span>
+                    {% endif %}
+                </div>
+                
+                <div class="flex-1">
+                    <!-- Notification content -->
+                    <div class="flex justify-between">
+                        <div>
+                            <a href="{% if notification.sender %}{% url 'users:view_profile' username=notification.sender.username %}{% endif %}" class="font-semibold hover:underline">
+                                {{ notification.sender.username|default:"User" }}
+                            </a>
+                            <span>
+                                {% if notification.type == 'like' %}
+                                liked your post
+                                {% elif notification.type == 'comment' %}
+                                commented on your post
+                                {% elif notification.type == 'follow' %}
+                                started following you
+                                {% else %}
+                                {{ notification.message|default:"sent you a notification" }}
+                                {% endif %}
+                            </span>
+                        </div>
+                        <span class="text-xs text-text-muted">{{ notification.created_at|default:"now"|date:"M d, H:i" }}</span>
+                    </div>
+                    
+                    <!-- Notification preview if available -->
+                    {% if notification.content %}
+                    <p class="text-sm text-text-muted mt-1">{{ notification.content }}</p>
+                    {% endif %}
+                    
+                    <!-- Notification actions -->
+                    <div class="mt-2 flex space-x-2">
+                        {% if notification.type == 'follow' %}
+                        <button class="text-xs bg-primary text-white px-3 py-1 rounded-full hover:bg-blue-600 transition">
+                            Follow back
+                        </button>
+                        {% elif notification.type == 'comment' %}
+                        <button class="text-xs bg-dark-light text-text-light px-3 py-1 rounded-full hover:bg-opacity-80 transition">
+                            Reply
+                        </button>
+                        {% endif %}
+                        
+                        <button class="text-xs text-text-muted hover:text-text-light">
+                            View
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <!-- Placeholder notifications -->
+            <div class="p-4 hover:bg-dark-light flex items-start space-x-3 bg-dark bg-opacity-40">
+                <div class="mt-1">
+                    <span class="text-red-500 flex items-center justify-center w-10 h-10 rounded-full bg-red-500 bg-opacity-10">
+                        <i class="fas fa-heart"></i>
+                    </span>
+                </div>
+                <div class="flex-1">
+                    <div class="flex justify-between">
+                        <div>
+                            <a href="#" class="font-semibold hover:underline">User1</a>
+                            <span>liked your post</span>
+                        </div>
+                        <span class="text-xs text-text-muted">2h ago</span>
+                    </div>
+                    <p class="text-sm text-text-muted mt-1">Your post "Hello world!"</p>
+                </div>
+            </div>
+            
+            <div class="p-4 hover:bg-dark-light flex items-start space-x-3">
+                <div class="mt-1">
+                    <span class="text-blue-500 flex items-center justify-center w-10 h-10 rounded-full bg-blue-500 bg-opacity-10">
+                        <i class="fas fa-comment"></i>
+                    </span>
+                </div>
+                <div class="flex-1">
+                    <div class="flex justify-between">
+                        <div>
+                            <a href="#" class="font-semibold hover:underline">User2</a>
+                            <span>commented on your post</span>
+                        </div>
+                        <span class="text-xs text-text-muted">5h ago</span>
+                    </div>
+                    <p class="text-sm text-text-muted mt-1">"Great post! I totally agree with your thoughts."</p>
+                    <div class="mt-2 flex space-x-2">
+                        <button class="text-xs bg-dark-light text-text-light px-3 py-1 rounded-full hover:bg-opacity-80 transition">
+                            Reply
+                        </button>
+                        <button class="text-xs text-text-muted hover:text-text-light">
+                            View
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-4 hover:bg-dark-light flex items-start space-x-3">
+                <div class="mt-1">
+                    <span class="text-green-500 flex items-center justify-center w-10 h-10 rounded-full bg-green-500 bg-opacity-10">
+                        <i class="fas fa-user-plus"></i>
+                    </span>
+                </div>
+                <div class="flex-1">
+                    <div class="flex justify-between">
+                        <div>
+                            <a href="#" class="font-semibold hover:underline">User3</a>
+                            <span>started following you</span>
+                        </div>
+                        <span class="text-xs text-text-muted">1d ago</span>
+                    </div>
+                    <div class="mt-2 flex space-x-2">
+                        <button class="text-xs bg-primary text-white px-3 py-1 rounded-full hover:bg-blue-600 transition">
+                            Follow back
+                        </button>
+                        <button class="text-xs text-text-muted hover:text-text-light">
+                            View profile
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            
+            <!-- Empty state -->
+            {% if not notifications and notifications|length == 0 %}
+            <div class="py-16 text-center">
+                <div class="mb-4">
+                    <i class="fas fa-bell text-5xl text-text-muted opacity-40"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-2">No notifications yet</h3>
+                <p class="text-text-muted">When someone interacts with your posts or profile, you'll see it here.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

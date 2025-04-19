@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Request Login Code | SocialStarter{% endblock %}
+
+{% load i18n %}
+
+{% block content %}
+<div class="flex items-center justify-center min-h-[80vh]">
+    <div class="px-8 py-6 text-left bg-dark-light shadow-lg rounded-lg max-w-md w-full">
+        <div class="mb-6 text-center">
+            <i class="fas fa-user-shield text-primary text-4xl mb-2"></i>
+            <h3 class="text-2xl font-bold text-text-light">{% trans "Login Verification" %}</h3>
+            <p class="text-text-muted text-sm mt-2">
+                {% blocktrans %}Enter your email to receive a secure login code.{% endblocktrans %}
+            </p>
+        </div>
+        
+        <form method="post" action="{% url 'account_request_login_code' %}">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+                <div class="p-3 mb-4 bg-red-900/50 border border-red-700 rounded-md text-text-light text-sm">
+                    {% for error in form.non_field_errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+            
+            <div class="mb-6">
+                <label class="block font-medium text-sm text-text-light mb-1" for="email">{% trans "Email" %}</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-text-muted">
+                        <i class="fas fa-envelope"></i>
+                    </span>
+                    <input type="email" name="email" id="email" placeholder="{% trans 'Enter your email address' %}" 
+                           class="w-full pl-10 px-4 py-2 rounded-md bg-dark border border-gray-700 text-text-light focus:outline-none focus:ring-2 focus:ring-primary" 
+                           autocomplete="email" required>
+                </div>
+                {% if form.email.errors %}
+                    <p class="text-red-400 text-xs mt-1">{{ form.email.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            
+            <button type="submit" class="w-full py-3 font-medium text-text-light bg-primary rounded-md hover:bg-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                {% trans "Send Login Code" %}
+            </button>
+            
+            <div class="mt-6 text-center">
+                <a href="{% url 'account_login' %}" class="text-sm text-primary hover:text-blue-400 transition">
+                    {% trans "Back to Login" %}
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %} 

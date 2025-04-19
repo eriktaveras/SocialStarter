@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}{{ user_profile.username }}'s Connections | SocialStarter{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="bg-secondary rounded-xl shadow-lg overflow-hidden">
+        <!-- Header with user info and tabs -->
+        <div class="p-6 border-b border-gray-700">
+            <div class="flex items-center space-x-4">
+                <a href="{% url 'users:view_profile' username=user_profile.username %}">
+                    <img src="{{ user_profile.profile.avatar_url|default:'https://via.placeholder.com/150' }}" 
+                        class="w-16 h-16 rounded-full object-cover" 
+                        alt="{{ user_profile.username }}">
+                </a>
+                <div>
+                    <h1 class="text-2xl font-bold">{{ user_profile.username }}</h1>
+                    <a href="{% url 'users:view_profile' username=user_profile.username %}" class="text-primary text-sm hover:underline">
+                        View Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tabs -->
+        <div class="flex border-b border-gray-700" x-data="{ activeTab: '{{ active_tab }}' }">
+            <a 
+                href="{% url 'users:connections' username=user_profile.username %}?tab=followers" 
+                @click="activeTab = 'followers'" 
+                :class="{ 'border-b-2 border-primary': activeTab === 'followers' }" 
+                class="flex-1 py-3 text-center font-medium focus:outline-none"
+            >
+                Followers ({{ user_profile.followers.count }})
+            </a>
+            <a 
+                href="{% url 'users:connections' username=user_profile.username %}?tab=following" 
+                @click="activeTab = 'following'" 
+                :class="{ 'border-b-2 border-primary': activeTab === 'following' }" 
+                class="flex-1 py-3 text-center font-medium focus:outline-none"
+            >
+                Following ({{ user_profile.following.count }})
+            </a>
+        </div>
+        
+        <!-- List of users -->
+        <div class="divide-y divide-gray-700">
+            {% if active_tab == 'followers' %}
+                {% for follower in followers %}
+                <div class="p-4 hover:bg-dark-light transition">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <a href="{% url 'users:view_profile' username=follower.username %}">
+                                <img src="{{ follower.profile.avatar_url|default:'https://via.placeholder.com/150' }}" 
+                                    class="w-12 h-12 rounded-full object-cover" 
+                                    alt="{{ follower.username }}">
+                            </a>
+                            <div>
+                                <a href="{% url 'users:view_profile' username=follower.username %}" class="font-semibold hover:underline">
+                                    {{ follower.username }}
+                                </a>
+                                <p class="text-text-muted text-sm">{{ follower.profile.bio|truncatechars:50 }}</p>
+                            </div>
+                        </div>
+                        
+                        {% if user != follower %}
+                            {% if follower in user.following.all %}
+                            <a href="{% url 'relationship:follow_user' follower.id %}" class="px-4 py-1 bg-dark-light rounded-full text-sm text-text-light hover:bg-opacity-80 transition">
+                                <i class="fas fa-user-check mr-1"></i> Following
+                            </a>
+                            {% else %}
+                            <a href="{% url 'relationship:follow_user' follower.id %}" class="px-4 py-1 bg-primary rounded-full text-sm text-white hover:bg-blue-600 transition">
+                                <i class="fas fa-user-plus mr-1"></i> Follow
+                            </a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+                {% empty %}
+                <div class="py-12 text-center">
+                    <div class="mb-4">
+                        <i class="fas fa-users text-5xl text-text-muted opacity-40"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">No followers yet</h3>
+                    <p class="text-text-muted">When people follow {{ user_profile.username }}, they'll show up here.</p>
+                </div>
+                {% endfor %}
+            {% else %}
+                {% for following in followings %}
+                <div class="p-4 hover:bg-dark-light transition">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <a href="{% url 'users:view_profile' username=following.username %}">
+                                <img src="{{ following.profile.avatar_url|default:'https://via.placeholder.com/150' }}" 
+                                    class="w-12 h-12 rounded-full object-cover" 
+                                    alt="{{ following.username }}">
+                            </a>
+                            <div>
+                                <a href="{% url 'users:view_profile' username=following.username %}" class="font-semibold hover:underline">
+                                    {{ following.username }}
+                                </a>
+                                <p class="text-text-muted text-sm">{{ following.profile.bio|truncatechars:50 }}</p>
+                            </div>
+                        </div>
+                        
+                        {% if user != following %}
+                        <a href="{% url 'relationship:follow_user' following.id %}" class="px-4 py-1 bg-dark-light rounded-full text-sm text-text-light hover:bg-opacity-80 transition">
+                            <i class="fas fa-user-check mr-1"></i> Following
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% empty %}
+                <div class="py-12 text-center">
+                    <div class="mb-4">
+                        <i class="fas fa-user-plus text-5xl text-text-muted opacity-40"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Not following anyone</h3>
+                    <p class="text-text-muted">When {{ user_profile.username }} follows people, they'll show up here.</p>
+                </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

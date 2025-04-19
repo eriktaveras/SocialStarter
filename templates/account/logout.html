@@ -1,12 +1,26 @@
 {% extends "base.html" %}
 
+{% block title %}Logout | SocialStarter{% endblock %}
+
 {% block content %}
-<div class="flex items-center justify-center min-h-screen bg-gray-100">
-    <div class="px-8 py-6 text-left bg-white shadow-lg">
-        <h3 class="text-2xl font-bold">Are you sure you want to logout?</h3>
+<div class="flex items-center justify-center min-h-[80vh]">
+    <div class="px-8 py-6 text-left bg-dark-light shadow-lg rounded-lg max-w-md w-full">
+        <div class="mb-6 text-center">
+            <i class="fas fa-sign-out-alt text-primary text-4xl mb-2"></i>
+            <h3 class="text-2xl font-bold text-text-light">Sign Out</h3>
+            <p class="text-text-muted text-sm">Are you sure you want to sign out?</p>
+        </div>
+        
         <form method="post" action="{% url 'account_logout' %}">
             {% csrf_token %}
-            <button type="submit" class="px-4 py-2 mt-4 text-white bg-red-600 rounded hover:bg-red-800">Logout</button>
+            <div class="flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-3">
+                <button type="submit" class="py-3 px-5 font-medium text-text-light bg-primary rounded-md hover:bg-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary flex-1">
+                    Yes, Sign Out
+                </button>
+                <a href="{% url 'feed:feed' %}" class="py-3 px-5 font-medium text-text-light bg-dark border border-gray-700 rounded-md hover:bg-dark-light transition text-center flex-1">
+                    Cancel
+                </a>
+            </div>
         </form>
     </div>
 </div>

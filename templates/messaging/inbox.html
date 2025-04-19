@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Messages | SocialStarter{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="bg-secondary rounded-xl shadow-lg overflow-hidden mb-6">
+        <div class="p-4 border-b border-gray-700">
+            <h1 class="text-xl font-bold">Messages</h1>
+        </div>
+        
+        <div class="divide-y divide-gray-700">
+            {% for conversation in conversations %}
+                {% comment %}Use with tag to create a temporary variable for tracking if we've found the other user{% endcomment %}
+                {% with found_other_user=False %}
+                    {% for participant in conversation.participants.all %}
+                        {% if participant.id != request.user.id and not found_other_user %}
+                            {% with other_user=participant found_other_user=True %}
+                            <a href="{% url 'messaging:conversation_detail' conversation.id %}" class="block hover:bg-dark-light transition">
+                                <div class="p-4 flex items-start space-x-3 relative">
+                                    <!-- User avatar -->
+                                    <img src="{{ other_user.profile.avatar_url|default:'https://via.placeholder.com/150' }}" 
+                                         class="w-12 h-12 rounded-full object-cover" 
+                                         alt="{{ other_user.username }}">
+                                    
+                                    <!-- Message preview -->
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex justify-between items-baseline">
+                                            <h2 class="font-semibold truncate">{{ other_user.username }}</h2>
+                                            <span class="text-xs text-text-muted">
+                                                {{ conversation.latest_message_time|date:"M d, Y" }}
+                                            </span>
+                                        </div>
+                                        {% if conversation.last_message %}
+                                        <p class="text-sm text-text-muted truncate">
+                                            {% if conversation.last_message.sender == request.user %}
+                                            <span class="text-xs text-text-muted">You: </span>
+                                            {% endif %}
+                                            {{ conversation.last_message.content }}
+                                        </p>
+                                        {% else %}
+                                        <p class="text-sm text-text-muted italic">No messages yet</p>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <!-- Unread indicator -->
+                                    {% if conversation.unread_count > 0 %}
+                                    <div class="absolute right-4 top-4">
+                                        <span class="bg-primary text-white text-xs font-bold px-2 py-1 rounded-full">
+                                            {{ conversation.unread_count }}
+                                        </span>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </a>
+                            {% endwith %}
+                        {% endif %}
+                    {% endfor %}
+                {% endwith %}
+            {% empty %}
+                <div class="p-10 text-center">
+                    <div class="mb-4">
+                        <i class="fas fa-comments text-5xl text-text-muted opacity-40"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">No messages yet</h3>
+                    <p class="text-text-muted mb-4">Start a conversation with someone to begin messaging.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Settings | SocialStarter{% endblock %}
+
+{% load i18n %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <!-- Settings sidebar -->
+        <div class="md:col-span-1">
+            <div class="bg-secondary rounded-xl shadow-lg overflow-hidden sticky top-20">
+                <div class="p-4">
+                    <h2 class="font-bold text-lg mb-4">{% trans "Settings" %}</h2>
+                    <ul class="space-y-1">
+                        <li>
+                            <a href="{% url 'settings:profile' %}" class="flex items-center space-x-3 p-2 rounded-lg {% if active_tab == 'profile' %}bg-primary/20 text-primary{% else %}hover:bg-dark-light{% endif %} transition">
+                                <i class="fas fa-user{% if active_tab == 'profile' %} text-primary{% endif %}"></i>
+                                <span>{% trans "Profile" %}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'settings:account' %}" class="flex items-center space-x-3 p-2 rounded-lg {% if active_tab == 'account' %}bg-primary/20 text-primary{% else %}hover:bg-dark-light{% endif %} transition">
+                                <i class="fas fa-shield-alt{% if active_tab == 'account' %} text-primary{% endif %}"></i>
+                                <span>{% trans "Account" %}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'settings:privacy' %}" class="flex items-center space-x-3 p-2 rounded-lg {% if active_tab == 'privacy' %}bg-primary/20 text-primary{% else %}hover:bg-dark-light{% endif %} transition">
+                                <i class="fas fa-lock{% if active_tab == 'privacy' %} text-primary{% endif %}"></i>
+                                <span>{% trans "Privacy" %}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'settings:notifications' %}" class="flex items-center space-x-3 p-2 rounded-lg {% if active_tab == 'notifications' %}bg-primary/20 text-primary{% else %}hover:bg-dark-light{% endif %} transition">
+                                <i class="fas fa-bell{% if active_tab == 'notifications' %} text-primary{% endif %}"></i>
+                                <span>{% trans "Notifications" %}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main content area -->
+        <div class="md:col-span-3">
+            <div class="bg-secondary rounded-xl shadow-lg overflow-hidden">
+                <div class="border-b border-dark/10 px-6 py-4">
+                    <h1 class="text-xl font-bold">{% block settings_title %}{% endblock %}</h1>
+                </div>
+                <div class="p-6">
+                    {% block settings_content %}{% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

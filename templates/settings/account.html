@@ -1,0 +1,97 @@
+{% extends "settings/base.html" %}
+{% load i18n %}
+
+{% block settings_title %}{% trans "Account Settings" %}{% endblock %}
+
+{% block settings_content %}
+<div class="space-y-8">
+    <!-- Email section -->
+    <div class="space-y-4">
+        <h2 class="text-lg font-semibold text-text-light">{% trans "Email" %}</h2>
+        
+        <div class="bg-dark-light p-4 rounded-lg">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-text-light">{{ user.email }}</p>
+                    {% if user.emailaddress_set.first.verified %}
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                            <i class="fas fa-check-circle mr-1"></i> {% trans "Verified" %}
+                        </span>
+                    {% else %}
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300">
+                            <i class="fas fa-exclamation-circle mr-1"></i> {% trans "Not Verified" %}
+                        </span>
+                    {% endif %}
+                </div>
+                <a href="{% url 'account_email' %}" class="text-primary hover:text-blue-400 transition">
+                    {% trans "Manage Emails" %}
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Password section -->
+    <div class="space-y-4">
+        <h2 class="text-lg font-semibold text-text-light">{% trans "Password" %}</h2>
+        
+        <div class="bg-dark-light p-4 rounded-lg">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-text-light">{% trans "Change your password regularly to keep your account secure." %}</p>
+                </div>
+                <a href="{% url 'account_change_password' %}" class="text-primary hover:text-blue-400 transition">
+                    {% trans "Change Password" %}
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Account actions -->
+    <div class="space-y-4">
+        <h2 class="text-lg font-semibold text-text-light">{% trans "Account Actions" %}</h2>
+        
+        <div class="bg-dark-light p-4 rounded-lg">
+            <p class="text-text-light mb-4">{% trans "Export or delete your account data." %}</p>
+            
+            <div class="flex space-x-4">
+                <button type="button" class="px-4 py-2 bg-dark text-text-light border border-gray-700 rounded-lg hover:bg-dark-light transition">
+                    <i class="fas fa-download mr-2"></i> {% trans "Download Data" %}
+                </button>
+                
+                <button type="button" class="px-4 py-2 bg-red-900/20 text-red-400 border border-red-800/30 rounded-lg hover:bg-red-900/40 transition">
+                    <i class="fas fa-trash-alt mr-2"></i> {% trans "Delete Account" %}
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Active Sessions -->
+    <div class="space-y-4">
+        <h2 class="text-lg font-semibold text-text-light">{% trans "Active Sessions" %}</h2>
+        
+        <div class="bg-dark-light p-4 rounded-lg divide-y divide-dark/10">
+            <div class="pb-3">
+                <div class="flex items-start space-x-3">
+                    <i class="fas fa-desktop text-primary mt-1"></i>
+                    <div>
+                        <p class="text-text-light font-medium">{% trans "Current Session" %}</p>
+                        <p class="text-text-muted text-sm">{{ request.META.HTTP_USER_AGENT|truncatechars:60 }}</p>
+                        <p class="text-text-muted text-sm">IP: {{ request.META.REMOTE_ADDR }} • {% trans "Now" %}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="py-3">
+                <p class="text-center text-text-muted text-sm">
+                    {% trans "For security, log out of browsers or devices you're not using." %}
+                </p>
+                <div class="mt-2 text-center">
+                    <button type="button" class="px-4 py-2 bg-dark text-text-light border border-gray-700 rounded-lg hover:bg-dark-light transition text-sm">
+                        {% trans "Sign out of all sessions" %}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

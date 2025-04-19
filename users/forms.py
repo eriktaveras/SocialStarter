@@ -19,6 +19,9 @@ class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ['bio', 'location', 'birth_date']
+        # File fields are handled in the view to support preview functionality
+        # avatar and cover_image are not included here because they're handled 
+        # separately in the view with request.FILES
         widgets = {
             'bio': forms.Textarea(attrs={
                 'class': 'shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border-gray-300 rounded-md',
